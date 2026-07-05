@@ -1,0 +1,24 @@
+name            = "img2prompt"
+main            = "worker.js"
+compatibility_date = "2024-09-23"
+
+# Routes: Worker handles /api/* ; static files served by Cloudflare Pages
+# When deploying via Pages, bind the Worker as a Function instead.
+# For standalone Worker + Pages combo, set up a Custom Domain or route below.
+
+# [routes]
+# pattern = "promptfromimage.com/api/*"
+# zone_name = "promptfromimage.com"
+
+# ── Secrets (never put real keys here) ─────────────────────────────────────
+# Run these commands once before deploying:
+#
+#   wrangler secret put GEMINI_API_KEY
+#   wrangler secret put TURNSTILE_SECRET_KEY
+#
+# GEMINI_API_KEY       → https://aistudio.google.com/app/apikey  (free tier)
+# TURNSTILE_SECRET_KEY → Cloudflare Dashboard › Turnstile › your site › Secret key
+# ───────────────────────────────────────────────────────────────────────────
+
+[dev]
+port = 8787
