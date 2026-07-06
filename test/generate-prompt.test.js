@@ -205,3 +205,21 @@ test('falls back to Vercel AI Gateway when the third-party route is unavailable'
     'https://ai-gateway.vercel.sh/v1/chat/completions',
   ]);
 });
+
+test('reports provider readiness without exposing credentials', async () => {
+  await withGatewayEnvironment(async () => {
+    throw new Error('health check must not call an upstream service');
+  }, async () => {
+    const response = createResponse();
+    await handler({ method: 'GET', headers: {}, socket: {} }, response);
+
+    assert.equal(response.statusCode, 200);
+    assert.deepEqual(response.body, {
+      status: 'ok',
+      thirdPartyConfigured: false,
+      gatewayAuthConfigured: true,
+      gatewayModel: 'google/gemini-2.5-flash-lite',
+    });
+    assert.doesNotMatch(JSON.stringify(response.body), /test-oidc-token|api-key|secret/i);
+  });
+});

@@ -209,6 +209,18 @@ module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") return res.status(204).end();
+  if (req.method === "GET") {
+    return res.status(200).json({
+      status: "ok",
+      thirdPartyConfigured: Boolean(
+        process.env.GEMINI_API_KEY && process.env.GEMINI_BASE_URL && process.env.GEMINI_MODEL
+      ),
+      gatewayAuthConfigured: Boolean(
+        process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN
+      ),
+      gatewayModel: process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash-lite",
+    });
+  }
   if (req.method !== "POST")    return res.status(404).json({ error: "Not found" });
 
   try {
