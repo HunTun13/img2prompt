@@ -4,8 +4,7 @@
  *
  * Set these in Vercel Dashboard → Project → Settings → Environment Variables:
  *   GEMINI_API_KEY
- *   GEMINI_BASE_URL   (e.g. https://aicode.cat)
- *   GEMINI_MODEL      (e.g. gemini-2.0-flash)
+ *   GEMINI_MODEL      (e.g. gemini-3.5-flash)
  *   TURNSTILE_SECRET_KEY
  */
 
@@ -80,47 +79,38 @@ async function toInlineData(imageData) {
   return { inlineData: { mimeType: mime, data: base64 } };
 }
 
-/* ===== GEMINI via OpenAI-compatible API ===== */
+/* ===== GEMINI ===== */
 async function callGemini(imagePart, prompt) {
-  const base  = (process.env.GEMINI_BASE_URL || "https://generativelanguage.googleapis.com").replace(/\/$/, "");
-  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-  const key   = process.env.GEMINI_API_KEY;
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("GEMINI_API_KEY is not configured");
 
-  // Convert inlineData to OpenAI image_url format
-  const imageContent = {
-    type: "image_url",
-    image_url: {
-      url: `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`
-    }
-  };
-
-  const res = await fetch(`${base}/v1/chat/completions`, {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const res = await fetch(url, {
     method:  "POST",
     headers: {
       "Content-Type":  "application/json",
-      "Authorization": `Bearer ${key}`
+      "x-goog-api-key": key,
     },
     body: JSON.stringify({
-      model,
-      messages: [{
-        role: "user",
-        content: [
-          imageContent,
-          { type: "text", text: prompt }
-        ]
-      }],
-      max_tokens:      1200,
-      temperature:     0.4,
-      response_format: { type: "json_object" }
-    })
+      contents: [{ parts: [imagePart, { text: prompt }] }],
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 1200,
+        responseMimeType: "application/json",
+      },
+    }),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`API ${res.status}: ${errText.slice(0, 300)}`);
+    console.error(`[gemini error] ${res.status}: ${errText.slice(0, 300)}`);
+    const error = new Error(`Gemini API returned ${res.status}`);
+    error.code = "UPSTREAM_UNAVAILABLE";
+    throw error;
   }
   const data = await res.json();
-  const text = data.choices?.[0]?.message?.content;
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error(`Empty API response: ${JSON.stringify(data).slice(0, 200)}`);
   return text;
 }
@@ -165,6 +155,12 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(result);
   } catch (err) {
     console.error("[api error]", err.message);
-    return res.status(500).json({ error: "Server error: " + err.message });
+    if (err.code === "UPSTREAM_UNAVAILABLE") {
+      return res.status(502).json({
+        error: "AI service is temporarily unavailable. Please try again.",
+        code: "UPSTREAM_UNAVAILABLE",
+      });
+    }
+    return res.status(500).json({ error: "Server error. Please try again." });
   }
 }

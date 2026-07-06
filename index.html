@@ -1082,23 +1082,27 @@ generateBtn.addEventListener('click', async () => {
   generateBtn.disabled = true;
 
   try {
-    // Try real API first; fallback to mock
-    let result;
-    try {
-      result = await callGeneratePromptAPI(state.imageDataUrl, state.format, state.detail, state.turnstileToken);
-    } catch (_) {
-      await new Promise(r => setTimeout(r, 1800)); // Simulate latency
-      result = getMockResult(state.format, state.detail);
-    }
+    const result = await callGeneratePromptAPI(state.imageDataUrl, state.format, state.detail, state.turnstileToken);
     state.lastResult = result;
     displayResults(result, state.format);
+  } catch (err) {
+    results.style.display = 'none';
+    showToast(`Generation failed: ${err.message || 'Please try again.'}`);
   } finally {
     generateBtn.classList.remove('loading');
-    generateBtn.disabled = false;
+    state.turnstileToken = null;
+    if (window.turnstile) window.turnstile.reset();
+    updateGenerateBtn();
   }
 });
 
-regenBtn.addEventListener('click', () => generateBtn.click());
+regenBtn.addEventListener('click', () => {
+  if (!state.turnstileToken) {
+    showToast('Verification is refreshing. Please try again in a moment.');
+    return;
+  }
+  generateBtn.click();
+});
 
 /* ===== API PLACEHOLDER ===== */
 /**
