@@ -133,7 +133,10 @@ async function requestVisionCompletion({ endpoint, token, model, imagePart, prom
 async function callGemini(imagePart, prompt) {
   const thirdPartyKey = process.env.GEMINI_API_KEY;
   const thirdPartyBase = process.env.GEMINI_BASE_URL?.replace(/\/+$/, "");
-  const thirdPartyModel = process.env.GEMINI_MODEL;
+  const configuredThirdPartyModel = process.env.GEMINI_MODEL;
+  const thirdPartyModel = configuredThirdPartyModel === "gemini-2.0-flash"
+    ? "gemini-3.5-flash"
+    : configuredThirdPartyModel;
 
   if (thirdPartyKey && thirdPartyBase && thirdPartyModel) {
     const endpoint = thirdPartyBase.endsWith("/v1")
@@ -209,60 +212,6 @@ module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method === "GET") {
-    if (req.query?.probe === "third-party-models") {
-      const key = process.env.GEMINI_API_KEY;
-      const base = process.env.GEMINI_BASE_URL?.replace(/\/+$/, "");
-      if (!key || !base) {
-        return res.status(200).json({
-          status: "error",
-          providerStatus: null,
-          reason: "THIRD_PARTY_NOT_CONFIGURED",
-        });
-      }
-
-      const endpoint = base.endsWith("/v1") ? `${base}/models` : `${base}/v1/models`;
-      try {
-        const providerResponse = await fetch(endpoint, {
-          headers: { Authorization: `Bearer ${key}` },
-        });
-        if (!providerResponse.ok) {
-          const text = await providerResponse.text();
-          return res.status(200).json({
-            status: "error",
-            providerStatus: providerResponse.status,
-            reason: text.includes("No available accounts")
-              ? "NO_AVAILABLE_ACCOUNTS"
-              : "PROVIDER_ERROR",
-          });
-        }
-
-        const data = await providerResponse.json();
-        const models = (Array.isArray(data.data) ? data.data : [])
-          .map(item => item?.id)
-          .filter(id => typeof id === "string" && /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(id))
-          .slice(0, 200);
-        return res.status(200).json({ status: "ok", providerStatus: 200, models });
-      } catch {
-        return res.status(200).json({
-          status: "error",
-          providerStatus: null,
-          reason: "NETWORK_ERROR",
-        });
-      }
-    }
-
-    return res.status(200).json({
-      status: "ok",
-      thirdPartyConfigured: Boolean(
-        process.env.GEMINI_API_KEY && process.env.GEMINI_BASE_URL && process.env.GEMINI_MODEL
-      ),
-      gatewayAuthConfigured: Boolean(
-        process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN
-      ),
-      gatewayModel: process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash-lite",
-    });
-  }
   if (req.method !== "POST")    return res.status(404).json({ error: "Not found" });
 
   try {
