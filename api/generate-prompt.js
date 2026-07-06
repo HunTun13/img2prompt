@@ -3,9 +3,10 @@
  * Route: /api/generate-prompt  (POST)
  *
  * Set these in Vercel Dashboard → Project → Settings → Environment Variables:
- *   GEMINI_API_KEY
- *   GEMINI_MODEL      (e.g. gemini-3.5-flash)
+ *   AI_GATEWAY_MODEL  (optional, defaults to google/gemini-2.5-flash-lite)
  *   TURNSTILE_SECRET_KEY
+ *
+ * Vercel automatically provides VERCEL_OIDC_TOKEN for AI Gateway authentication.
  */
 
 /* ===== PROMPT TEMPLATES ===== */
@@ -81,36 +82,68 @@ async function toInlineData(imageData) {
 
 /* ===== GEMINI ===== */
 async function callGemini(imagePart, prompt) {
-  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error("GEMINI_API_KEY is not configured");
+  const model = process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash-lite";
+  const token = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  if (!token) throw new Error("Vercel AI Gateway authentication is not available");
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-  const res = await fetch(url, {
+  const imageContent = {
+    type: "image_url",
+    image_url: {
+      url: `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`,
+      detail: "high",
+    },
+  };
+
+  const res = await fetch("https://ai-gateway.vercel.sh/v1/chat/completions", {
     method:  "POST",
     headers: {
       "Content-Type":  "application/json",
-      "x-goog-api-key": key,
+      "Authorization": `Bearer ${token}`,
     },
     body: JSON.stringify({
-      contents: [{ parts: [imagePart, { text: prompt }] }],
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 1200,
-        responseMimeType: "application/json",
+      model,
+      messages: [{
+        role: "user",
+        content: [imageContent, { type: "text", text: prompt }],
+      }],
+      max_tokens: 1200,
+      temperature: 0.4,
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "image_prompt",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              mainPrompt: { type: "string" },
+              modelPrompt: { type: "string" },
+              negativePrompt: { type: "string" },
+              styleKeywords: { type: "array", items: { type: "string" } },
+              lighting: { type: "string" },
+              camera: { type: "string" },
+              colorPalette: { type: "string" },
+            },
+            required: [
+              "mainPrompt", "modelPrompt", "negativePrompt", "styleKeywords",
+              "lighting", "camera", "colorPalette",
+            ],
+            additionalProperties: false,
+          },
+        },
       },
     }),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    console.error(`[gemini error] ${res.status}: ${errText.slice(0, 300)}`);
-    const error = new Error(`Gemini API returned ${res.status}`);
+    console.error(`[gateway error] ${res.status}: ${errText.slice(0, 300)}`);
+    const error = new Error(`AI Gateway returned ${res.status}`);
     error.code = "UPSTREAM_UNAVAILABLE";
     throw error;
   }
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const text = data.choices?.[0]?.message?.content;
   if (!text) throw new Error(`Empty API response: ${JSON.stringify(data).slice(0, 200)}`);
   return text;
 }

@@ -39,23 +39,23 @@ function createRequest() {
   };
 }
 
-async function withGeminiEnvironment(fetchImpl, run) {
+async function withGatewayEnvironment(fetchImpl, run) {
   const originalFetch = global.fetch;
   const originalWarn = console.warn;
   const originalError = console.error;
   const originalEnv = {
-    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-    GEMINI_BASE_URL: process.env.GEMINI_BASE_URL,
-    GEMINI_MODEL: process.env.GEMINI_MODEL,
+    AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
+    VERCEL_OIDC_TOKEN: process.env.VERCEL_OIDC_TOKEN,
+    AI_GATEWAY_MODEL: process.env.AI_GATEWAY_MODEL,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
   };
 
   global.fetch = fetchImpl;
   console.warn = () => {};
   console.error = () => {};
-  process.env.GEMINI_API_KEY = 'test-api-key';
-  delete process.env.GEMINI_BASE_URL;
-  process.env.GEMINI_MODEL = 'gemini-3.5-flash';
+  delete process.env.AI_GATEWAY_API_KEY;
+  process.env.VERCEL_OIDC_TOKEN = 'test-oidc-token';
+  delete process.env.AI_GATEWAY_MODEL;
   delete process.env.TURNSTILE_SECRET_KEY;
 
   try {
@@ -71,7 +71,7 @@ async function withGeminiEnvironment(fetchImpl, run) {
   }
 }
 
-test('sends image analysis requests to the official Gemini native API', async () => {
+test('uses Vercel AI Gateway with automatic OIDC authentication', async () => {
   const calls = [];
   const result = {
     mainPrompt: 'A brass instrument on a table.',
@@ -83,10 +83,10 @@ test('sends image analysis requests to the official Gemini native API', async ()
     colorPalette: 'gold and brown',
   };
 
-  await withGeminiEnvironment(async (url, options) => {
+  await withGatewayEnvironment(async (url, options) => {
     calls.push({ url, options });
     return new Response(JSON.stringify({
-      candidates: [{ content: { parts: [{ text: JSON.stringify(result) }] } }],
+      choices: [{ message: { content: JSON.stringify(result) } }],
     }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   }, async () => {
     const response = createResponse();
@@ -99,19 +99,20 @@ test('sends image analysis requests to the official Gemini native API', async ()
   assert.equal(calls.length, 1);
   assert.equal(
     calls[0].url,
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',
+    'https://ai-gateway.vercel.sh/v1/chat/completions',
   );
-  assert.equal(calls[0].options.headers['x-goog-api-key'], 'test-api-key');
-  assert.equal(calls[0].options.headers.Authorization, undefined);
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer test-oidc-token');
+  assert.equal(calls[0].options.headers['x-goog-api-key'], undefined);
 
   const body = JSON.parse(calls[0].options.body);
-  assert.equal(body.contents[0].parts[0].inlineData.mimeType, 'image/png');
-  assert.equal(body.contents[0].parts[0].inlineData.data, 'aGVsbG8=');
-  assert.match(body.contents[0].parts[1].text, /expert AI image prompt engineer/);
+  assert.equal(body.model, 'google/gemini-2.5-flash-lite');
+  assert.equal(body.messages[0].content[0].type, 'image_url');
+  assert.equal(body.messages[0].content[0].image_url.url, 'data:image/png;base64,aGVsbG8=');
+  assert.match(body.messages[0].content[1].text, /expert AI image prompt engineer/);
 });
 
 test('returns a safe service error when Gemini is unavailable', async () => {
-  await withGeminiEnvironment(async () => new Response(
+  await withGatewayEnvironment(async () => new Response(
     'No available accounts: private provider details',
     { status: 503 },
   ), async () => {
