@@ -6,6 +6,11 @@
  *   AI_GATEWAY_MODEL  (optional, defaults to google/gemini-2.5-flash-lite)
  *   TURNSTILE_SECRET_KEY
  *
+ * Optional OpenAI-compatible provider (tried before AI Gateway):
+ *   GEMINI_API_KEY
+ *   GEMINI_BASE_URL
+ *   GEMINI_MODEL
+ *
  * Vercel automatically provides VERCEL_OIDC_TOKEN for AI Gateway authentication.
  */
 
@@ -81,11 +86,7 @@ async function toInlineData(imageData) {
 }
 
 /* ===== GEMINI ===== */
-async function callGemini(imagePart, prompt) {
-  const model = process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash-lite";
-  const token = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
-  if (!token) throw new Error("Vercel AI Gateway authentication is not available");
-
+async function requestVisionCompletion({ endpoint, token, model, imagePart, prompt, responseFormat, label }) {
   const imageContent = {
     type: "image_url",
     image_url: {
@@ -94,7 +95,7 @@ async function callGemini(imagePart, prompt) {
     },
   };
 
-  const res = await fetch("https://ai-gateway.vercel.sh/v1/chat/completions", {
+  const res = await fetch(endpoint, {
     method:  "POST",
     headers: {
       "Content-Type":  "application/json",
@@ -108,44 +109,86 @@ async function callGemini(imagePart, prompt) {
       }],
       max_tokens: 1200,
       temperature: 0.4,
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "image_prompt",
-          strict: true,
-          schema: {
-            type: "object",
-            properties: {
-              mainPrompt: { type: "string" },
-              modelPrompt: { type: "string" },
-              negativePrompt: { type: "string" },
-              styleKeywords: { type: "array", items: { type: "string" } },
-              lighting: { type: "string" },
-              camera: { type: "string" },
-              colorPalette: { type: "string" },
-            },
-            required: [
-              "mainPrompt", "modelPrompt", "negativePrompt", "styleKeywords",
-              "lighting", "camera", "colorPalette",
-            ],
-            additionalProperties: false,
-          },
-        },
-      },
+      response_format: responseFormat,
     }),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    console.error(`[gateway error] ${res.status}: ${errText.slice(0, 300)}`);
-    const error = new Error(`AI Gateway returned ${res.status}`);
+    console.error(`[${label} error] ${res.status}: ${errText.slice(0, 300)}`);
+    const error = new Error(`${label} returned ${res.status}`);
     error.code = "UPSTREAM_UNAVAILABLE";
     throw error;
   }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error(`Empty API response: ${JSON.stringify(data).slice(0, 200)}`);
+  if (!text) {
+    const error = new Error(`Empty ${label} response`);
+    error.code = "UPSTREAM_UNAVAILABLE";
+    throw error;
+  }
   return text;
+}
+
+async function callGemini(imagePart, prompt) {
+  const thirdPartyKey = process.env.GEMINI_API_KEY;
+  const thirdPartyBase = process.env.GEMINI_BASE_URL?.replace(/\/+$/, "");
+  const thirdPartyModel = process.env.GEMINI_MODEL;
+
+  if (thirdPartyKey && thirdPartyBase && thirdPartyModel) {
+    const endpoint = thirdPartyBase.endsWith("/v1")
+      ? `${thirdPartyBase}/chat/completions`
+      : `${thirdPartyBase}/v1/chat/completions`;
+    try {
+      return await requestVisionCompletion({
+        endpoint,
+        token: thirdPartyKey,
+        model: thirdPartyModel,
+        imagePart,
+        prompt,
+        responseFormat: { type: "json_object" },
+        label: "third-party API",
+      });
+    } catch (error) {
+      console.warn(`[provider fallback] ${error.message}`);
+    }
+  }
+
+  const gatewayToken = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  if (!gatewayToken) throw new Error("Vercel AI Gateway authentication is not available");
+
+  return requestVisionCompletion({
+    endpoint: "https://ai-gateway.vercel.sh/v1/chat/completions",
+    token: gatewayToken,
+    model: process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash-lite",
+    imagePart,
+    prompt,
+    responseFormat: {
+      type: "json_schema",
+      json_schema: {
+        name: "image_prompt",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            mainPrompt: { type: "string" },
+            modelPrompt: { type: "string" },
+            negativePrompt: { type: "string" },
+            styleKeywords: { type: "array", items: { type: "string" } },
+            lighting: { type: "string" },
+            camera: { type: "string" },
+            colorPalette: { type: "string" },
+          },
+          required: [
+            "mainPrompt", "modelPrompt", "negativePrompt", "styleKeywords",
+            "lighting", "camera", "colorPalette",
+          ],
+          additionalProperties: false,
+        },
+      },
+    },
+    label: "AI Gateway",
+  });
 }
 
 /* ===== PARSE ===== */

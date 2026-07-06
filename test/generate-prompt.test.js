@@ -39,7 +39,7 @@ function createRequest() {
   };
 }
 
-async function withGatewayEnvironment(fetchImpl, run) {
+async function withGatewayEnvironment(fetchImpl, run, overrides = {}) {
   const originalFetch = global.fetch;
   const originalWarn = console.warn;
   const originalError = console.error;
@@ -47,6 +47,9 @@ async function withGatewayEnvironment(fetchImpl, run) {
     AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
     VERCEL_OIDC_TOKEN: process.env.VERCEL_OIDC_TOKEN,
     AI_GATEWAY_MODEL: process.env.AI_GATEWAY_MODEL,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    GEMINI_BASE_URL: process.env.GEMINI_BASE_URL,
+    GEMINI_MODEL: process.env.GEMINI_MODEL,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
   };
 
@@ -56,7 +59,11 @@ async function withGatewayEnvironment(fetchImpl, run) {
   delete process.env.AI_GATEWAY_API_KEY;
   process.env.VERCEL_OIDC_TOKEN = 'test-oidc-token';
   delete process.env.AI_GATEWAY_MODEL;
+  delete process.env.GEMINI_API_KEY;
+  delete process.env.GEMINI_BASE_URL;
+  delete process.env.GEMINI_MODEL;
   delete process.env.TURNSTILE_SECRET_KEY;
+  Object.assign(process.env, overrides);
 
   try {
     await run();
@@ -126,4 +133,75 @@ test('returns a safe service error when Gemini is unavailable', async () => {
     });
     assert.doesNotMatch(JSON.stringify(response.body), /private provider details/);
   });
+});
+
+test('uses the configured OpenAI-compatible third-party route first', async () => {
+  const calls = [];
+  const result = {
+    mainPrompt: 'Third-party image description.',
+    modelPrompt: 'third-party prompt',
+    negativePrompt: 'blurry',
+    styleKeywords: ['photo'],
+    lighting: 'daylight',
+    camera: 'close-up',
+    colorPalette: 'neutral',
+  };
+
+  await withGatewayEnvironment(async (url, options) => {
+    calls.push({ url, options });
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify(result) } }],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }, async () => {
+    const response = createResponse();
+    await handler(createRequest(), response);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.mainPrompt, result.mainPrompt);
+  }, {
+    GEMINI_API_KEY: 'third-party-key',
+    GEMINI_BASE_URL: 'https://aicode.cat',
+    GEMINI_MODEL: 'vision-model',
+  });
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, 'https://aicode.cat/v1/chat/completions');
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer third-party-key');
+  assert.equal(JSON.parse(calls[0].options.body).model, 'vision-model');
+});
+
+test('falls back to Vercel AI Gateway when the third-party route is unavailable', async () => {
+  const calls = [];
+  const fallbackResult = {
+    mainPrompt: 'Fallback image description.',
+    modelPrompt: 'fallback prompt',
+    negativePrompt: 'blurry',
+    styleKeywords: ['photo'],
+    lighting: 'daylight',
+    camera: 'close-up',
+    colorPalette: 'neutral',
+  };
+
+  await withGatewayEnvironment(async (url, options) => {
+    calls.push({ url, options });
+    if (url.startsWith('https://aicode.cat')) {
+      return new Response('No available accounts', { status: 503 });
+    }
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify(fallbackResult) } }],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }, async () => {
+    const response = createResponse();
+    await handler(createRequest(), response);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.mainPrompt, fallbackResult.mainPrompt);
+  }, {
+    GEMINI_API_KEY: 'third-party-key',
+    GEMINI_BASE_URL: 'https://aicode.cat',
+    GEMINI_MODEL: 'vision-model',
+  });
+
+  assert.deepEqual(calls.map(call => call.url), [
+    'https://aicode.cat/v1/chat/completions',
+    'https://ai-gateway.vercel.sh/v1/chat/completions',
+  ]);
 });
