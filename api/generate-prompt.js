@@ -3,10 +3,15 @@
  * Route: /api/generate-prompt  (POST)
  *
  * Set these in Vercel Dashboard → Project → Settings → Environment Variables:
- *   GEMINI_API_KEY
- *   GEMINI_BASE_URL   (e.g. https://aicode.cat)
- *   GEMINI_MODEL      (e.g. gemini-2.0-flash)
+ *   AI_GATEWAY_MODEL  (optional, defaults to google/gemini-2.5-flash-lite)
  *   TURNSTILE_SECRET_KEY
+ *
+ * Optional OpenAI-compatible provider (tried before AI Gateway):
+ *   GEMINI_API_KEY
+ *   GEMINI_BASE_URL
+ *   GEMINI_MODEL
+ *
+ * Vercel automatically provides VERCEL_OIDC_TOKEN for AI Gateway authentication.
  */
 
 /* ===== PROMPT TEMPLATES ===== */
@@ -80,49 +85,110 @@ async function toInlineData(imageData) {
   return { inlineData: { mimeType: mime, data: base64 } };
 }
 
-/* ===== GEMINI via OpenAI-compatible API ===== */
-async function callGemini(imagePart, prompt) {
-  const base  = (process.env.GEMINI_BASE_URL || "https://generativelanguage.googleapis.com").replace(/\/$/, "");
-  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-  const key   = process.env.GEMINI_API_KEY;
-
-  // Convert inlineData to OpenAI image_url format
+/* ===== GEMINI ===== */
+async function requestVisionCompletion({ endpoint, token, model, imagePart, prompt, responseFormat, label }) {
   const imageContent = {
     type: "image_url",
     image_url: {
-      url: `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`
-    }
+      url: `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`,
+      detail: "high",
+    },
   };
 
-  const res = await fetch(`${base}/v1/chat/completions`, {
+  const res = await fetch(endpoint, {
     method:  "POST",
     headers: {
       "Content-Type":  "application/json",
-      "Authorization": `Bearer ${key}`
+      "Authorization": `Bearer ${token}`,
     },
     body: JSON.stringify({
       model,
       messages: [{
         role: "user",
-        content: [
-          imageContent,
-          { type: "text", text: prompt }
-        ]
+        content: [imageContent, { type: "text", text: prompt }],
       }],
-      max_tokens:      1200,
-      temperature:     0.4,
-      response_format: { type: "json_object" }
-    })
+      max_tokens: 1200,
+      temperature: 0.4,
+      response_format: responseFormat,
+    }),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`API ${res.status}: ${errText.slice(0, 300)}`);
+    console.error(`[${label} error] ${res.status}: ${errText.slice(0, 300)}`);
+    const error = new Error(`${label} returned ${res.status}`);
+    error.code = "UPSTREAM_UNAVAILABLE";
+    throw error;
   }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error(`Empty API response: ${JSON.stringify(data).slice(0, 200)}`);
+  if (!text) {
+    const error = new Error(`Empty ${label} response`);
+    error.code = "UPSTREAM_UNAVAILABLE";
+    throw error;
+  }
   return text;
+}
+
+async function callGemini(imagePart, prompt) {
+  const thirdPartyKey = process.env.GEMINI_API_KEY;
+  const thirdPartyBase = process.env.GEMINI_BASE_URL?.replace(/\/+$/, "");
+  const thirdPartyModel = process.env.GEMINI_MODEL;
+
+  if (thirdPartyKey && thirdPartyBase && thirdPartyModel) {
+    const endpoint = thirdPartyBase.endsWith("/v1")
+      ? `${thirdPartyBase}/chat/completions`
+      : `${thirdPartyBase}/v1/chat/completions`;
+    try {
+      return await requestVisionCompletion({
+        endpoint,
+        token: thirdPartyKey,
+        model: thirdPartyModel,
+        imagePart,
+        prompt,
+        responseFormat: { type: "json_object" },
+        label: "third-party API",
+      });
+    } catch (error) {
+      console.warn(`[provider fallback] ${error.message}`);
+    }
+  }
+
+  const gatewayToken = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  if (!gatewayToken) throw new Error("Vercel AI Gateway authentication is not available");
+
+  return requestVisionCompletion({
+    endpoint: "https://ai-gateway.vercel.sh/v1/chat/completions",
+    token: gatewayToken,
+    model: process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash-lite",
+    imagePart,
+    prompt,
+    responseFormat: {
+      type: "json_schema",
+      json_schema: {
+        name: "image_prompt",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            mainPrompt: { type: "string" },
+            modelPrompt: { type: "string" },
+            negativePrompt: { type: "string" },
+            styleKeywords: { type: "array", items: { type: "string" } },
+            lighting: { type: "string" },
+            camera: { type: "string" },
+            colorPalette: { type: "string" },
+          },
+          required: [
+            "mainPrompt", "modelPrompt", "negativePrompt", "styleKeywords",
+            "lighting", "camera", "colorPalette",
+          ],
+          additionalProperties: false,
+        },
+      },
+    },
+    label: "AI Gateway",
+  });
 }
 
 /* ===== PARSE ===== */
@@ -165,6 +231,12 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(result);
   } catch (err) {
     console.error("[api error]", err.message);
-    return res.status(500).json({ error: "Server error: " + err.message });
+    if (err.code === "UPSTREAM_UNAVAILABLE") {
+      return res.status(502).json({
+        error: "AI service is temporarily unavailable. Please try again.",
+        code: "UPSTREAM_UNAVAILABLE",
+      });
+    }
+    return res.status(500).json({ error: "Server error. Please try again." });
   }
 }
