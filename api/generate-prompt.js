@@ -210,6 +210,48 @@ module.exports = async function handler(req, res) {
 
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method === "GET") {
+    if (req.query?.probe === "third-party-models") {
+      const key = process.env.GEMINI_API_KEY;
+      const base = process.env.GEMINI_BASE_URL?.replace(/\/+$/, "");
+      if (!key || !base) {
+        return res.status(200).json({
+          status: "error",
+          providerStatus: null,
+          reason: "THIRD_PARTY_NOT_CONFIGURED",
+        });
+      }
+
+      const endpoint = base.endsWith("/v1") ? `${base}/models` : `${base}/v1/models`;
+      try {
+        const providerResponse = await fetch(endpoint, {
+          headers: { Authorization: `Bearer ${key}` },
+        });
+        if (!providerResponse.ok) {
+          const text = await providerResponse.text();
+          return res.status(200).json({
+            status: "error",
+            providerStatus: providerResponse.status,
+            reason: text.includes("No available accounts")
+              ? "NO_AVAILABLE_ACCOUNTS"
+              : "PROVIDER_ERROR",
+          });
+        }
+
+        const data = await providerResponse.json();
+        const models = (Array.isArray(data.data) ? data.data : [])
+          .map(item => item?.id)
+          .filter(id => typeof id === "string" && /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(id))
+          .slice(0, 200);
+        return res.status(200).json({ status: "ok", providerStatus: 200, models });
+      } catch {
+        return res.status(200).json({
+          status: "error",
+          providerStatus: null,
+          reason: "NETWORK_ERROR",
+        });
+      }
+    }
+
     return res.status(200).json({
       status: "ok",
       thirdPartyConfigured: Boolean(

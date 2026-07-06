@@ -223,3 +223,39 @@ test('reports provider readiness without exposing credentials', async () => {
     assert.doesNotMatch(JSON.stringify(response.body), /test-oidc-token|api-key|secret/i);
   });
 });
+
+test('probes configured third-party model IDs without exposing its key', async () => {
+  const calls = [];
+  await withGatewayEnvironment(async (url, options) => {
+    calls.push({ url, options });
+    return new Response(JSON.stringify({
+      data: [
+        { id: 'gemini-2.0-flash' },
+        { id: 'gpt-4.1-mini' },
+        { id: '<script>bad</script>' },
+      ],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }, async () => {
+    const response = createResponse();
+    await handler({
+      method: 'GET',
+      query: { probe: 'third-party-models' },
+      headers: {},
+      socket: {},
+    }, response);
+
+    assert.equal(response.statusCode, 200);
+    assert.deepEqual(response.body, {
+      status: 'ok',
+      providerStatus: 200,
+      models: ['gemini-2.0-flash', 'gpt-4.1-mini'],
+    });
+    assert.equal(calls[0].url, 'https://aicode.cat/v1/models');
+    assert.equal(calls[0].options.headers.Authorization, 'Bearer third-party-key');
+    assert.doesNotMatch(JSON.stringify(response.body), /third-party-key/);
+  }, {
+    GEMINI_API_KEY: 'third-party-key',
+    GEMINI_BASE_URL: 'https://aicode.cat',
+    GEMINI_MODEL: 'vision-model',
+  });
+});
