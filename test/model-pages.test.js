@@ -98,3 +98,50 @@ test('landing pages provide contextual links to the other model guides', () => {
     }
   }
 });
+
+test('homepage links its model cards to the three in-depth guides', () => {
+  assert.match(homepage, /href="\/midjourney-image-to-prompt\/"/);
+  assert.match(homepage, /href="\/nano-banana-image-to-prompt\/"/);
+  assert.match(homepage, /href="\/image-to-video-prompt\/"/);
+  assert.doesNotMatch(homepage, /Includes[^<]*[–—-]{1,2}v(?:\s|,|<)/i);
+});
+
+test('sitemap exposes all public landing and trust pages with absolute URLs', () => {
+  const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
+  const publicPaths = [
+    '/',
+    '/midjourney-image-to-prompt/',
+    '/nano-banana-image-to-prompt/',
+    '/image-to-video-prompt/',
+    '/privacy/',
+    '/terms/',
+    '/contact/',
+  ];
+
+  for (const publicPath of publicPaths) {
+    assert.match(sitemap, new RegExp(`<loc>https://img2prompt\\.app${publicPath.replace(/\//g, '\\/')}</loc>`));
+  }
+  assert.equal((sitemap.match(/<url>/g) || []).length, publicPaths.length);
+});
+
+test('all published JSON-LD blocks contain valid JSON', () => {
+  const structuredPages = [
+    'index.html',
+    'midjourney-image-to-prompt/index.html',
+    'nano-banana-image-to-prompt/index.html',
+    'image-to-video-prompt/index.html',
+  ];
+  let blockCount = 0;
+
+  for (const page of structuredPages) {
+    const html = fs.readFileSync(path.join(root, page), 'utf8');
+    const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+    assert.ok(blocks.length > 0, `${page} should contain structured data`);
+    for (const block of blocks) {
+      assert.doesNotThrow(() => JSON.parse(block[1]), `${page} contains invalid JSON-LD`);
+      blockCount += 1;
+    }
+  }
+
+  assert.equal(blockCount, 6);
+});
