@@ -44,3 +44,23 @@ test('front-end exposes safe analytics event hooks for the conversion funnel', (
     assert.match(html, new RegExp(`trackEvent\\('${eventName}'`), `${eventName} should be tracked`);
   });
 });
+
+test('uses current model guidance and consistent public branding', () => {
+  const apiSource = fs.readFileSync(path.join(root, 'api', 'generate-prompt.js'), 'utf8');
+
+  assert.doesNotMatch(apiSource, /--v 6\b/, 'Midjourney output must not force an obsolete version');
+  assert.doesNotMatch(html, /PromptFromImage/, 'public copy and structured data should use Img2Prompt');
+});
+
+test('accurately discloses third-party image processing', () => {
+  assert.match(
+    html,
+    /sent to (?:our )?configured AI (?:service providers|providers) for processing/i,
+    'privacy copy should disclose AI provider processing',
+  );
+  assert.doesNotMatch(
+    html,
+    /not stored or retained on our servers after processing/i,
+    'privacy copy must not make an unsupported absolute retention promise',
+  );
+});

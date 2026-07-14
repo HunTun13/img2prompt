@@ -28,7 +28,7 @@ const JSON_SCHEMA = `{
 
 const MODEL_GUIDE = {
   general:           "Use clear natural language. Cover subject, environment, style, mood, technical details.",
-  midjourney:        "Use concise style phrases separated by commas. End with --ar 16:9 --v 6 --style raw. Prioritize visual impact words.",
+  midjourney:        "Use concise descriptive phrases separated by commas. Infer an appropriate --ar value from the image. Add --raw only when a less opinionated result helps. Do not add a --v version flag.",
   flux:              "Use flowing natural-language sentences. Avoid tag-heavy comma lists. Be descriptive and specific.",
   "stable-diffusion":"Use weighted parenthesis tags like (subject:1.3). For modelPrompt include both positive tags and a separate negative block.",
   "nano-banana":     "Prioritize subject consistency and scene editability. Use: Subject + Environment + Style + Mood structure.",
