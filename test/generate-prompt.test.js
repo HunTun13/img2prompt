@@ -39,6 +39,12 @@ function createRequest() {
   };
 }
 
+function createRemoteImageRequest(imageData) {
+  const request = createRequest();
+  request.body.imageData = imageData;
+  return request;
+}
+
 async function withGatewayEnvironment(fetchImpl, run, overrides = {}) {
   const originalFetch = global.fetch;
   const originalWarn = console.warn;
@@ -234,4 +240,158 @@ test('falls back to Vercel AI Gateway when the third-party route is unavailable'
     'https://aicode.cat/v1/chat/completions',
     'https://ai-gateway.vercel.sh/v1/chat/completions',
   ]);
+});
+
+test('rejects private remote image URLs before making an outbound request', async () => {
+  let fetchCalls = 0;
+
+  await withGatewayEnvironment(async () => {
+    fetchCalls += 1;
+    throw new Error('fetch should not be called');
+  }, async () => {
+    const response = createResponse();
+    await handler(createRemoteImageRequest('http://127.0.0.1/private.png'), response);
+
+    assert.equal(response.statusCode, 400);
+    assert.deepEqual(response.body, {
+      error: 'Please use a public image URL.',
+      code: 'INVALID_IMAGE_URL',
+    });
+  });
+
+  assert.equal(fetchCalls, 0);
+});
+
+test('rejects remote responses that are not supported images', async () => {
+  await withGatewayEnvironment(async () => new Response('<html>not an image</html>', {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  }), async () => {
+    const response = createResponse();
+    await handler(createRemoteImageRequest('https://93.184.216.34/not-image'), response);
+
+    assert.equal(response.statusCode, 415);
+    assert.deepEqual(response.body, {
+      error: 'The URL must point to a JPG, PNG, or WebP image.',
+      code: 'UNSUPPORTED_IMAGE_TYPE',
+    });
+  });
+});
+
+test('rejects oversized remote images before reading their body', async () => {
+  await withGatewayEnvironment(async () => new Response('oversized', {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/png',
+      'Content-Length': String(10 * 1024 * 1024 + 1),
+    },
+  }), async () => {
+    const response = createResponse();
+    await handler(createRemoteImageRequest('https://93.184.216.34/huge.png'), response);
+
+    assert.equal(response.statusCode, 413);
+    assert.deepEqual(response.body, {
+      error: 'Image too large (max 10 MB).',
+      code: 'IMAGE_TOO_LARGE',
+    });
+  });
+});
+
+test('rejects unsupported inline data instead of forwarding it to an AI provider', async () => {
+  let fetchCalls = 0;
+
+  await withGatewayEnvironment(async () => {
+    fetchCalls += 1;
+    throw new Error('provider fetch should not be called');
+  }, async () => {
+    const response = createResponse();
+    await handler(createRemoteImageRequest('data:text/html;base64,PGgxPm5vdCBhbiBpbWFnZTwvaDE+'), response);
+
+    assert.equal(response.statusCode, 415);
+    assert.deepEqual(response.body, {
+      error: 'Please upload a JPG, PNG, or WebP image.',
+      code: 'UNSUPPORTED_IMAGE_TYPE',
+    });
+  });
+
+  assert.equal(fetchCalls, 0);
+});
+
+test('rejects unknown model formats before calling an AI provider', async () => {
+  let fetchCalls = 0;
+
+  await withGatewayEnvironment(async () => {
+    fetchCalls += 1;
+    throw new Error('provider fetch should not be called');
+  }, async () => {
+    const request = createRequest();
+    request.body.format = 'unknown-model';
+    const response = createResponse();
+    await handler(request, response);
+
+    assert.equal(response.statusCode, 400);
+    assert.deepEqual(response.body, {
+      error: 'Please choose a supported prompt format and detail level.',
+      code: 'INVALID_OPTIONS',
+    });
+  });
+
+  assert.equal(fetchCalls, 0);
+});
+
+async function captureProviderPrompt(format) {
+  let providerPrompt = '';
+  const result = {
+    mainPrompt: 'A faithful description of the visible scene.',
+    modelPrompt: 'A model-ready prompt.',
+    negativePrompt: 'unwanted artifacts',
+    styleKeywords: ['faithful'],
+    lighting: 'natural light',
+    camera: 'eye level',
+    colorPalette: 'neutral',
+  };
+
+  await withGatewayEnvironment(async (_url, options) => {
+    const body = JSON.parse(options.body);
+    providerPrompt = body.messages[0].content[1].text;
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify(result) } }],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }, async () => {
+    const request = createRequest();
+    request.body.format = format;
+    const response = createResponse();
+    await handler(request, response);
+    assert.equal(response.statusCode, 200);
+  });
+
+  return providerPrompt;
+}
+
+test('anchors every generated prompt to visible evidence instead of invented details', async () => {
+  const prompt = await captureProviderPrompt('general');
+  assert.match(prompt, /visible evidence/i);
+  assert.match(prompt, /do not guess[^\n]*(?:identity|brand|text)/i);
+});
+
+test('uses current Midjourney-specific prompt guidance', async () => {
+  const prompt = await captureProviderPrompt('midjourney');
+  assert.match(prompt, /--ar/);
+  assert.match(prompt, /--no/);
+  assert.match(prompt, /do not add[^\n]*--v/i);
+});
+
+test('uses edit-aware Nano Banana prompt guidance', async () => {
+  const prompt = await captureProviderPrompt('nano-banana');
+  assert.match(prompt, /preserve (?:the )?(?:subject's )?identity/i);
+  assert.match(prompt, /what must not change/i);
+  assert.match(prompt, /edit instruction/i);
+});
+
+test('uses motion-specific image-to-video prompt guidance', async () => {
+  const prompt = await captureProviderPrompt('video');
+  assert.match(prompt, /starting frame/i);
+  assert.match(prompt, /end state/i);
+  assert.match(prompt, /one (?:clear )?camera move/i);
+  assert.match(prompt, /avoid (?:abrupt )?(?:cuts|scene changes)/i);
 });

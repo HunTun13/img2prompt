@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midjourney Image to Prompt Generator | Img2Prompt</title>
+  <meta name="description" content="Turn any reference image into a Midjourney-ready prompt with useful composition, lighting, aspect-ratio, raw-style, and exclusion guidance.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://img2prompt.app/midjourney-image-to-prompt/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Midjourney Image to Prompt Generator | Img2Prompt">
+  <meta property="og:description" content="Create reusable Midjourney prompts from reference images, with current parameter guidance.">
+  <meta property="og:url" content="https://img2prompt.app/midjourney-image-to-prompt/">
+  <link rel="stylesheet" href="../assets/content-pages.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can an image reveal its original Midjourney prompt?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. An image does not contain its exact original prompt. Img2Prompt creates a reusable visual equivalent from visible subject, composition, lighting, style, and color evidence." }
+      },
+      {
+        "@type": "Question",
+        "name": "Should a Midjourney image prompt include a version parameter?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Usually no. Omitting a version parameter lets Midjourney use the account's current default. Add a version only when you intentionally need a specific model behavior." }
+      },
+      {
+        "@type": "Question",
+        "name": "What does the Midjourney aspect-ratio parameter do?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The --ar parameter sets the canvas proportion. Matching the reference image's broad shape, such as portrait, square, or landscape, helps preserve composition." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">Img2<span>Prompt</span></a>
+      <a class="header-cta" href="/?format=midjourney#generator">Generate a prompt</a>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <p class="eyebrow">Model-specific image analysis</p>
+    <h1>Midjourney Image to Prompt Generator</h1>
+    <p class="lede">Upload a reference image and get a concise Midjourney-ready prompt built around its visible subject, composition, lighting, mood, and aspect ratio.</p>
+    <div class="hero-actions">
+      <a class="primary-link" href="/?format=midjourney#generator">Turn an image into a Midjourney prompt</a>
+      <a class="secondary-link" href="#examples">See prompt examples →</a>
+    </div>
+    <ul class="proof-list" aria-label="Benefits">
+      <li>Free to use</li><li>No login</li><li>Current parameter guidance</li><li>Structured output</li>
+    </ul>
+
+    <section class="section-block">
+      <div class="section-heading">
+        <h2>What makes a useful Midjourney prompt?</h2>
+        <p>A strong reconstruction prompt describes what matters visually, then adds only the parameters that help preserve the reference.</p>
+      </div>
+      <div class="principle-grid">
+        <div class="principle-card"><strong>Visual hierarchy first</strong><p>Lead with the main subject and defining action before style words and technical details.</p></div>
+        <div class="principle-card"><strong>Match the canvas</strong><p>Use an inferred <code>--ar</code> value to keep a portrait, square, or cinematic landscape composition.</p></div>
+        <div class="principle-card"><strong>Use parameters with intent</strong><p>Add <code>--raw</code> when literal prompt control helps, and a short <code>--no</code> list only for important exclusions.</p></div>
+      </div>
+      <div class="notice">Img2Prompt does not force a model version. That avoids pinning your prompt to an obsolete default and leaves you free to choose a version when a project requires one.</div>
+    </section>
+
+    <section class="section-block" id="examples">
+      <div class="section-heading">
+        <h2>Midjourney prompt examples</h2>
+        <p>These examples show how the same structure adapts to photography, illustration, and product imagery.</p>
+      </div>
+      <div class="example-grid">
+        <article class="example-card">
+          <div class="example-context"><h3>Cinematic mountain landscape</h3><p>Reference cues: wide lake, misty peaks, dawn light, small foreground bridge.</p></div>
+          <pre class="prompt-output">misty granite mountains at dawn, still alpine lake reflecting the peaks, narrow wooden bridge in the foreground, ancient pine trees, warm sunlight breaking through low cloud, atmospheric depth, cinematic nature photography, restrained blue and amber palette --ar 16:9 --raw --no people, text, watermark</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Editorial portrait</h3><p>Reference cues: close framing, soft window light, muted studio background, natural skin texture.</p></div>
+          <pre class="prompt-output">editorial close-up portrait of a woman in a charcoal linen jacket, calm direct expression, soft north-facing window light, subtle shadow falloff, warm gray studio background, natural skin texture, 85mm portrait photography, quiet contemporary mood --ar 4:5 --raw</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Minimal product still life</h3><p>Reference cues: amber bottle, stone pedestal, hard sunlight, clean beige set.</p></div>
+          <pre class="prompt-output">amber glass skincare bottle centered on a pale travertine pedestal, minimal warm beige studio set, crisp diagonal sunlight and defined geometric shadow, premium editorial product photography, tactile stone and glass surfaces, clean negative space --ar 1:1 --raw --no hands, extra bottles, lettering</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>How to improve the generated prompt</h2></div>
+      <ul class="tip-list">
+        <li><strong>Keep the subject early.</strong> Midjourney generally responds better when the important subject is clear before secondary atmosphere and style cues.</li>
+        <li><strong>Remove guesses.</strong> If a brand, location, or person's identity is not visually certain, describe only the visible evidence.</li>
+        <li><strong>Tune, don't stack.</strong> Add stylization or model-version parameters yourself only when you know why the project needs them.</li>
+      </ul>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Midjourney image-to-prompt FAQ</h2></div>
+      <div class="faq-list">
+        <article class="faq-item"><h3>Can this recover the exact original prompt?</h3><p>No. It builds a practical equivalent from visible evidence; seeds, hidden settings, source images, and the original wording cannot be recovered from pixels alone.</p></article>
+        <article class="faq-item"><h3>Why is there no fixed version number?</h3><p>Version defaults change. Leaving the version out keeps the prompt portable and lets your Midjourney account use its current default.</p></article>
+        <article class="faq-item"><h3>When should I use --raw?</h3><p>Use <code>--raw</code> when you want the written visual details to carry more weight and need less automatic aesthetic interpretation.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Explore other prompt formats</h2></div>
+      <div class="related-grid">
+        <a class="related-card" href="/nano-banana-image-to-prompt/"><strong>Nano Banana image to prompt</strong><p>Write explicit edits while preserving identity and defining visual features.</p></a>
+        <a class="related-card" href="/image-to-video-prompt/"><strong>Image to video prompt</strong><p>Add coherent camera, subject, and environmental motion to a still frame.</p></a>
+        <a class="related-card" href="/"><strong>All prompt formats</strong><p>Try Flux, Stable Diffusion, DALL·E, JSON, and general structured prompts.</p></a>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <h2>Make your Midjourney prompt from an image</h2>
+      <p>Use the free generator to analyze your own reference and receive the main prompt, model-ready prompt, exclusions, lighting, camera, style, and color palette.</p>
+      <a class="primary-link" href="/?format=midjourney#generator">Generate a Midjourney prompt</a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 Img2Prompt</span><nav class="footer-links" aria-label="Footer"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a></nav></div></footer>
+</body>
+</html>

@@ -14,10 +14,30 @@
  * Vercel automatically provides VERCEL_OIDC_TOKEN for AI Gateway authentication.
  */
 
+const dns = require("node:dns").promises;
+const net = require("node:net");
+
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_REMOTE_REDIRECTS = 3;
+const REMOTE_FETCH_TIMEOUT_MS = 8000;
+const SUPPORTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const SUPPORTED_FORMATS = new Set(["general", "midjourney", "flux", "stable-diffusion", "nano-banana", "dalle", "video", "json"]);
+const SUPPORTED_DETAILS = new Set(["short", "balanced", "detailed"]);
+
+class ClientInputError extends Error {
+  constructor(statusCode, code, safeMessage) {
+    super(safeMessage);
+    this.statusCode = statusCode;
+    this.code = code;
+    this.safeMessage = safeMessage;
+  }
+}
+
 /* ===== PROMPT TEMPLATES ===== */
 const BASE_SYSTEM = `You are an expert AI image prompt engineer.
 Analyze the provided image and generate a high-quality prompt to recreate a visually similar image.
 Do NOT claim this is the original prompt — generate the best reusable equivalent.
+Base every field on visible evidence. Do not guess a person's identity, a brand, or unreadable text.
 Return ONLY a valid JSON object, no markdown fences, no explanation.`;
 
 const JSON_SCHEMA = `{
@@ -32,12 +52,12 @@ const JSON_SCHEMA = `{
 
 const MODEL_GUIDE = {
   general:            "Use clear natural language. Cover subject, environment, style, mood, technical details.",
-  midjourney:         "Use concise style phrases separated by commas. End with --ar 16:9 --v 6 --style raw.",
+  midjourney:         "Use concise descriptive phrases separated by commas. Infer an appropriate --ar value from the image. Add --raw only when a less opinionated result helps. Put exclusions in a short --no parameter when useful. Do not add a --v version flag.",
   flux:               "Use flowing natural-language sentences. Avoid tag-heavy comma lists.",
   "stable-diffusion": "Use weighted parenthesis tags like (subject:1.3). Include positive and negative blocks.",
-  "nano-banana":      "Prioritize subject consistency. Use: Subject + Environment + Style + Mood structure.",
+  "nano-banana":      "Write a direct natural-language edit instruction. Preserve the subject's identity and defining features. State the requested change, the surrounding context, and what must not change. For pure recreation, describe the subject, environment, composition, lighting, and style without inventing details.",
   dalle:              "Use clear descriptive paragraphs. State subject, scene, and style explicitly.",
-  video:              "Include camera movement, subject motion, environmental dynamics, suggested duration.",
+  video:              "Treat the image as the starting frame. Describe one clear camera move, subject motion, environmental motion, timing, and the intended end state. Keep motion physically coherent and avoid abrupt cuts or unrelated scene changes.",
   json:               "Make modelPrompt a stringified JSON with fields: subject, environment, style, lighting, camera, mood, colors.",
 };
 
@@ -70,19 +90,158 @@ async function validateTurnstile(token, clientIp) {
 }
 
 /* ===== IMAGE PREP ===== */
+function isPrivateIpv4(address) {
+  const parts = address.split(".").map(Number);
+  if (parts.length !== 4 || parts.some(part => !Number.isInteger(part) || part < 0 || part > 255)) return true;
+  const [a, b, c] = parts;
+  return a === 0
+    || a === 10
+    || a === 127
+    || (a === 100 && b >= 64 && b <= 127)
+    || (a === 169 && b === 254)
+    || (a === 172 && b >= 16 && b <= 31)
+    || (a === 192 && b === 0 && (c === 0 || c === 2))
+    || (a === 192 && b === 88 && c === 99)
+    || (a === 192 && b === 168)
+    || (a === 198 && (b === 18 || b === 19))
+    || (a === 198 && b === 51 && c === 100)
+    || (a === 203 && b === 0 && c === 113)
+    || a >= 224;
+}
+
+function isPrivateIp(address) {
+  const version = net.isIP(address);
+  if (version === 4) return isPrivateIpv4(address);
+  if (version !== 6) return true;
+
+  const normalized = address.toLowerCase();
+  if (normalized === "::" || normalized === "::1") return true;
+  if (normalized.startsWith("fc") || normalized.startsWith("fd") || normalized.startsWith("fe8") || normalized.startsWith("fe9") || normalized.startsWith("fea") || normalized.startsWith("feb")) return true;
+  const mappedIpv4 = normalized.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/)?.[1];
+  return mappedIpv4 ? isPrivateIpv4(mappedIpv4) : false;
+}
+
+function invalidImageUrl() {
+  return new ClientInputError(400, "INVALID_IMAGE_URL", "Please use a public image URL.");
+}
+
+async function validatePublicImageUrl(rawUrl) {
+  let url;
+  try {
+    url = new URL(rawUrl);
+  } catch {
+    throw invalidImageUrl();
+  }
+
+  if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) {
+    throw invalidImageUrl();
+  }
+
+  const hostname = url.hostname.replace(/^\[|\]$/g, "").toLowerCase();
+  if (!hostname || hostname === "localhost" || hostname.endsWith(".localhost")) {
+    throw invalidImageUrl();
+  }
+
+  let addresses;
+  if (net.isIP(hostname)) {
+    addresses = [hostname];
+  } else {
+    try {
+      addresses = (await dns.lookup(hostname, { all: true, verbatim: true })).map(result => result.address);
+    } catch {
+      throw invalidImageUrl();
+    }
+  }
+
+  if (!addresses.length || addresses.some(isPrivateIp)) throw invalidImageUrl();
+  return url;
+}
+
+async function readLimitedBody(response) {
+  const declaredLength = Number(response.headers.get("content-length"));
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_IMAGE_BYTES) {
+    throw new ClientInputError(413, "IMAGE_TOO_LARGE", "Image too large (max 10 MB).");
+  }
+
+  if (!response.body?.getReader) {
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (buffer.length > MAX_IMAGE_BYTES) {
+      throw new ClientInputError(413, "IMAGE_TOO_LARGE", "Image too large (max 10 MB).");
+    }
+    return buffer;
+  }
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAX_IMAGE_BYTES) {
+      await reader.cancel();
+      throw new ClientInputError(413, "IMAGE_TOO_LARGE", "Image too large (max 10 MB).");
+    }
+    chunks.push(Buffer.from(value));
+  }
+  return Buffer.concat(chunks, total);
+}
+
+async function fetchRemoteImage(imageUrl) {
+  let currentUrl = await validatePublicImageUrl(imageUrl);
+
+  for (let redirectCount = 0; redirectCount <= MAX_REMOTE_REDIRECTS; redirectCount += 1) {
+    let response;
+    try {
+      response = await fetch(currentUrl.toString(), {
+        redirect: "manual",
+        signal: AbortSignal.timeout(REMOTE_FETCH_TIMEOUT_MS),
+        headers: {
+          Accept: "image/jpeg,image/png,image/webp",
+          "User-Agent": "Img2Prompt/1.0",
+        },
+      });
+    } catch {
+      throw new ClientInputError(400, "IMAGE_FETCH_FAILED", "We could not download that image URL.");
+    }
+
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location || redirectCount === MAX_REMOTE_REDIRECTS) throw invalidImageUrl();
+      currentUrl = await validatePublicImageUrl(new URL(location, currentUrl).toString());
+      continue;
+    }
+
+    if (!response.ok) {
+      throw new ClientInputError(400, "IMAGE_FETCH_FAILED", "We could not download that image URL.");
+    }
+
+    const mimeType = response.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
+    if (!SUPPORTED_IMAGE_TYPES.has(mimeType)) {
+      throw new ClientInputError(415, "UNSUPPORTED_IMAGE_TYPE", "The URL must point to a JPG, PNG, or WebP image.");
+    }
+
+    const buffer = await readLimitedBody(response);
+    return { inlineData: { mimeType, data: buffer.toString("base64") } };
+  }
+
+  throw invalidImageUrl();
+}
+
 async function toInlineData(imageData) {
   if (imageData.startsWith("data:")) {
     const [header, base64] = imageData.split(",");
-    const mimeType = header.match(/data:([^;]+)/)?.[1] || "image/jpeg";
-    return { inlineData: { mimeType, data: base64 } };
+    const mimeType = header.match(/^data:([^;]+);base64$/i)?.[1]?.toLowerCase();
+    if (!SUPPORTED_IMAGE_TYPES.has(mimeType) || !base64) {
+      throw new ClientInputError(415, "UNSUPPORTED_IMAGE_TYPE", "Please upload a JPG, PNG, or WebP image.");
+    }
+    const buffer = Buffer.from(base64, "base64");
+    if (buffer.length > MAX_IMAGE_BYTES) {
+      throw new ClientInputError(413, "IMAGE_TOO_LARGE", "Image too large (max 10 MB).");
+    }
+    return { inlineData: { mimeType, data: buffer.toString("base64") } };
   }
-  const res = await fetch(imageData);
-  if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
-  // Use Buffer in Node.js environment
-  const buf    = Buffer.from(await res.arrayBuffer());
-  const base64 = buf.toString("base64");
-  const mime   = res.headers.get("content-type")?.split(";")[0] || "image/jpeg";
-  return { inlineData: { mimeType: mime, data: base64 } };
+  return fetchRemoteImage(imageData);
 }
 
 /* ===== GEMINI ===== */
@@ -219,6 +378,12 @@ module.exports = async function handler(req, res) {
 
     if (!imageData || !format || !detail || !cfToken)
       return res.status(400).json({ error: "Missing required fields" });
+    if (!SUPPORTED_FORMATS.has(format) || !SUPPORTED_DETAILS.has(detail)) {
+      return res.status(400).json({
+        error: "Please choose a supported prompt format and detail level.",
+        code: "INVALID_OPTIONS",
+      });
+    }
     if (imageData.length > 12 * 1024 * 1024)
       return res.status(413).json({ error: "Image too large (max 10 MB)" });
 
@@ -234,6 +399,12 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(result);
   } catch (err) {
     console.error("[api error]", err.message);
+    if (err instanceof ClientInputError) {
+      return res.status(err.statusCode).json({
+        error: err.safeMessage,
+        code: err.code,
+      });
+    }
     if (err.code === "UPSTREAM_UNAVAILABLE") {
       return res.status(502).json({
         error: "AI service is temporarily unavailable. Please try again.",

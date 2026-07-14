@@ -62,7 +62,7 @@
       "name": "Can I use the prompt in Midjourney?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Select the Midjourney format before generating, and PromptFromImage will output a prompt with concise style phrases, aspect ratio suggestions, and Midjourney-compatible syntax you can paste directly into Discord."
+        "text": "Yes. Select the Midjourney format before generating, and Img2Prompt will output a prompt with concise style phrases, aspect ratio suggestions, and Midjourney-compatible syntax you can paste directly into Discord."
       }
     },
     {
@@ -94,7 +94,7 @@
       "name": "Is this image to prompt generator free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, PromptFromImage offers free image to prompt generation. You can upload images and generate model-ready prompts at no cost."
+        "text": "Yes, Img2Prompt offers free image to prompt generation. You can upload images and generate model-ready prompts at no cost."
       }
     },
     {
@@ -102,7 +102,7 @@
       "name": "Are my uploaded images stored?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Uploaded images are only used for the current prompt generation request and are not stored or retained on our servers after processing."
+        "text": "Uploaded images are used for the current request and sent to our configured AI service providers for processing. Img2Prompt does not intentionally retain uploaded image content after the request completes."
       }
     }
   ]
@@ -123,11 +123,6 @@
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "reviewCount": "124"
   }
 }
 </script>
@@ -462,6 +457,7 @@ header {
   transition: border-color .2s, box-shadow .2s;
 }
 .format-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+.format-guide-link { display: inline-block; margin-top: 12px; font-size: 14px; font-weight: 600; }
 .format-icon {
   width: 40px; height: 40px; background: var(--primary-light);
   border-radius: 10px; display: flex; align-items: center;
@@ -727,13 +723,14 @@ footer {
     <div class="container" style="padding:0;">
       <p class="section-label">Supported Formats</p>
       <h2 class="section-title">Prompt Formats for Every AI Image Model</h2>
-      <p class="section-sub">PromptFromImage generates model-specific prompts, not just generic descriptions.</p>
+      <p class="section-sub">Img2Prompt generates model-specific prompts, not just generic descriptions.</p>
     </div>
     <div class="formats-grid" style="margin-top:48px;">
       <div class="format-card">
         <div class="format-icon">🎨</div>
         <h3>Midjourney Prompt</h3>
-        <p>Concise style phrases, aspect ratio suggestions, and Midjourney-compatible syntax. Includes –ar, –v, and style parameters for direct Discord use.</p>
+        <p>Concise visual phrases with an inferred aspect ratio, optional raw styling, and useful exclusions—without pinning an outdated model version.</p>
+        <a class="format-guide-link" href="/midjourney-image-to-prompt/">Read the Midjourney guide →</a>
       </div>
       <div class="format-card">
         <div class="format-icon">⚡</div>
@@ -749,6 +746,7 @@ footer {
         <div class="format-icon">🍌</div>
         <h3>Nano Banana Prompt</h3>
         <p>Subject consistency, scene editability, and structured description — optimized for Nano Banana image generation and editing workflows.</p>
+        <a class="format-guide-link" href="/nano-banana-image-to-prompt/">Read the Nano Banana guide →</a>
       </div>
       <div class="format-card">
         <div class="format-icon">🤖</div>
@@ -759,6 +757,7 @@ footer {
         <div class="format-icon">🎬</div>
         <h3>Image-to-Video Prompt</h3>
         <p>Camera movement, subject action, scene dynamics, and temporal flow — designed for AI video generation tools that take a still image as reference.</p>
+        <a class="format-guide-link" href="/image-to-video-prompt/">Read the image-to-video guide →</a>
       </div>
     </div>
   </div>
@@ -928,7 +927,7 @@ footer {
           Are my uploaded images stored?
           <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="faq-a">Uploaded images are only used for the current prompt generation request and are not stored or retained on our servers after processing.</div>
+        <div class="faq-a">Uploaded images are used for the current request and sent to our configured AI service providers for processing. Img2Prompt does not intentionally retain uploaded image content after the request completes.</div>
       </div>
 
     </div>
@@ -943,6 +942,9 @@ footer {
       <a href="#how-to-use">How it Works</a>
       <a href="#supported-formats">Formats</a>
       <a href="#faq">FAQ</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+      <a href="/contact/">Contact</a>
     </div>
     <div class="footer-copy">© 2026 Img2Prompt · Free Image to Prompt Generator</div>
   </div>
@@ -953,10 +955,15 @@ footer {
 
 <script>
 /* ===== STATE ===== */
+const PUBLIC_FORMATS = new Set([
+  'general', 'midjourney', 'flux', 'stable-diffusion',
+  'nano-banana', 'dalle', 'video', 'json'
+]);
+const requestedFormat = new URLSearchParams(window.location.search).get('format');
 const state = {
   imageFile: null,
   imageDataUrl: null,
-  format: 'general',
+  format: PUBLIC_FORMATS.has(requestedFormat) ? requestedFormat : 'general',
   detail: 'detailed',
   turnstileToken: null,
   lastResult: null
@@ -978,6 +985,10 @@ const copyBtn     = document.getElementById('copy-btn');
 const regenBtn    = document.getElementById('regenerate-btn');
 const dlBtn       = document.getElementById('download-btn');
 const toast       = document.getElementById('toast');
+
+document.querySelectorAll('#format-pills .pill').forEach(pill => {
+  pill.classList.toggle('active', pill.dataset.val === state.format);
+});
 
 /* ===== ANALYTICS ===== */
 function trackEvent(name, params = {}) {
@@ -1175,8 +1186,8 @@ const MOCK = {
     colorPalette: 'Warm ambers and golds, muted sage greens, cool gray stone tones, soft pink cherry blossoms against pale sky.'
   },
   midjourney: {
-    mainPrompt: 'misty mountain landscape at dawn, granite peaks wreathed in morning fog, ancient pine forest foreground, narrow wooden bridge over still reflective lake, golden rays breaking through clouds, atmospheric depth, epic scale --ar 16:9 --v 6 --style raw --q 2',
-    modelPrompt: '/imagine prompt: misty mountain landscape at dawn, granite peaks, morning fog atmosphere, ancient pine forest, wooden bridge, reflective lake, golden hour rays, photorealistic, cinematic, epic landscape, atmospheric --ar 16:9 --v 6 --style raw',
+    mainPrompt: 'misty mountain landscape at dawn, granite peaks wreathed in morning fog, ancient pine forest foreground, narrow wooden bridge over still reflective lake, golden rays breaking through clouds, atmospheric depth, epic scale --ar 16:9 --raw',
+    modelPrompt: 'misty mountain landscape at dawn, granite peaks, morning fog atmosphere, ancient pine forest, wooden bridge, reflective lake, golden hour rays, photorealistic, cinematic, epic landscape, atmospheric --ar 16:9 --raw',
     negativePrompt: '(not used in Midjourney — use --no flag if needed: --no people, watermark, text)',
     styleKeywords: ['cinematic', 'epic', 'atmospheric', 'dramatic', 'misty', 'golden hour', 'natural', 'landscape', 'photorealistic'],
     lighting: 'Dramatic golden morning light rays piercing through mountain fog, creating depth and atmospheric haze.',
@@ -1329,7 +1340,7 @@ dlBtn.addEventListener('click', () => {
   if (!state.lastResult) return;
   const r = state.lastResult;
   const lines = [
-    `PromptFromImage — ${FORMAT_LABELS[state.format] || 'Prompt'}`,
+    `Img2Prompt — ${FORMAT_LABELS[state.format] || 'Prompt'}`,
     '='.repeat(50),
     '', 'MAIN PROMPT:', r.mainPrompt,
     '', 'MODEL-SPECIFIC PROMPT:', r.modelPrompt,
@@ -1338,7 +1349,7 @@ dlBtn.addEventListener('click', () => {
     '', 'LIGHTING:', r.lighting,
     '', 'CAMERA / COMPOSITION:', r.camera,
     '', 'COLOR PALETTE:', r.colorPalette,
-    '', '---', 'Generated by PromptFromImage.com'
+    '', '---', 'Generated by Img2Prompt.app'
   ];
   const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
   const a = document.createElement('a');

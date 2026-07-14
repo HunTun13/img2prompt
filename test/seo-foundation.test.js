@@ -44,3 +44,58 @@ test('front-end exposes safe analytics event hooks for the conversion funnel', (
     assert.match(html, new RegExp(`trackEvent\\('${eventName}'`), `${eventName} should be tracked`);
   });
 });
+
+test('uses current model guidance and consistent public branding', () => {
+  const apiSource = fs.readFileSync(path.join(root, 'api', 'generate-prompt.js'), 'utf8');
+
+  assert.doesNotMatch(apiSource, /--v 6\b/, 'Midjourney output must not force an obsolete version');
+  assert.doesNotMatch(html, /PromptFromImage/, 'public copy and structured data should use Img2Prompt');
+});
+
+test('accurately discloses third-party image processing', () => {
+  assert.match(
+    html,
+    /sent to (?:our )?configured AI (?:service providers|providers) for processing/i,
+    'privacy copy should disclose AI provider processing',
+  );
+  assert.doesNotMatch(
+    html,
+    /not stored or retained on our servers after processing/i,
+    'privacy copy must not make an unsupported absolute retention promise',
+  );
+});
+
+test('publishes complete trust pages with unique canonical metadata', () => {
+  const pages = [
+    { directory: 'privacy', title: /Privacy Policy \| Img2Prompt/, h1: /Privacy Policy/, canonical: 'https://img2prompt.app/privacy/' },
+    { directory: 'terms', title: /Terms of Use \| Img2Prompt/, h1: /Terms of Use/, canonical: 'https://img2prompt.app/terms/' },
+    { directory: 'contact', title: /Contact \| Img2Prompt/, h1: /Contact Img2Prompt/, canonical: 'https://img2prompt.app/contact/' },
+  ];
+
+  assert.equal(fs.existsSync(path.join(root, 'assets', 'content-pages.css')), true);
+
+  for (const page of pages) {
+    const pagePath = path.join(root, page.directory, 'index.html');
+    assert.equal(fs.existsSync(pagePath), true, `${page.directory} page should exist`);
+    const pageHtml = fs.readFileSync(pagePath, 'utf8');
+    assert.match(pageHtml, page.title);
+    assert.match(pageHtml, new RegExp(`<h1[^>]*>${page.h1.source}</h1>`));
+    assert.match(pageHtml, new RegExp(`<link rel="canonical" href="${page.canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
+    assert.match(pageHtml, /assets\/content-pages\.css/);
+  }
+
+  const privacyHtml = fs.readFileSync(path.join(root, 'privacy', 'index.html'), 'utf8');
+  assert.match(privacyHtml, /configured AI service providers/i);
+  assert.match(privacyHtml, /does not sell/i);
+  assert.match(privacyHtml, /Cloudflare Turnstile/i);
+});
+
+test('links trust pages from the homepage footer', () => {
+  assert.match(html, /href="\/privacy\/"[^>]*>Privacy</);
+  assert.match(html, /href="\/terms\/"[^>]*>Terms</);
+  assert.match(html, /href="\/contact\/"[^>]*>Contact</);
+});
+
+test('does not publish unverifiable ratings or review counts', () => {
+  assert.doesNotMatch(html, /aggregateRating|reviewCount|ratingValue/);
+});

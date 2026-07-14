@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to Video Prompt Generator | Img2Prompt</title>
+  <meta name="description" content="Turn a still image into a structured video prompt with camera movement, subject motion, environmental action, timing, and a coherent end state.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://img2prompt.app/image-to-video-prompt/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Image to Video Prompt Generator | Img2Prompt">
+  <meta property="og:description" content="Plan coherent motion from a reference image for modern AI video generators.">
+  <meta property="og:url" content="https://img2prompt.app/image-to-video-prompt/">
+  <link rel="stylesheet" href="../assets/content-pages.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What should an image-to-video prompt include?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Describe the image as the starting frame, then specify one camera movement, subject motion, environmental motion, timing, and the intended end state." }
+      },
+      {
+        "@type": "Question",
+        "name": "How much motion should I request from one image?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Start with one clear camera move and one or two compatible motions. Too many competing actions can cause unstable shapes, identity drift, and abrupt transitions." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a negative motion prompt?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It is a short list of unwanted movement artifacts, such as camera shake, sudden cuts, morphing, flicker, duplicated objects, or physically impossible motion." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/">Img2<span>Prompt</span></a><a class="header-cta" href="/?format=video#generator">Generate a video prompt</a></div></header>
+
+  <main class="page-shell">
+    <p class="eyebrow">Motion planning from a still frame</p>
+    <h1>Image to Video Prompt Generator</h1>
+    <p class="lede">Upload a still image and turn it into a video-ready motion brief covering camera movement, subject motion, environmental dynamics, timing, and the end state.</p>
+    <div class="hero-actions"><a class="primary-link" href="/?format=video#generator">Create an image-to-video prompt</a><a class="secondary-link" href="#examples">See motion examples →</a></div>
+    <ul class="proof-list" aria-label="Benefits"><li>Free to use</li><li>No login</li><li>Motion-specific output</li><li>Negative motion guidance</li></ul>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Move the image without losing the image</h2><p>The reference is the starting frame. A reliable prompt introduces a small number of compatible changes and makes their direction, pace, and destination clear.</p></div>
+      <div class="principle-grid">
+        <div class="principle-card"><strong>Choose one camera move</strong><p>A slow push, pullback, pan, tilt, or orbit gives the shot a readable visual path without conflicting instructions.</p></div>
+        <div class="principle-card"><strong>Separate subject motion</strong><p>Describe what the subject does independently from the camera: turns, walks, blinks, sways, opens, or remains still.</p></div>
+        <div class="principle-card"><strong>Define the end state</strong><p>Say where the shot settles or what has changed by the final frame, so movement has a coherent destination.</p></div>
+      </div>
+      <div class="notice">Keep environmental motion subordinate: drifting fog, moving fabric, rippling water, changing light, or floating dust should support the main action rather than compete with it.</div>
+    </section>
+
+    <section class="section-block" id="examples">
+      <div class="section-heading"><h2>Image-to-video prompt examples</h2><p>Each example combines a stable starting frame with one camera move, clear subject action, and controlled environmental motion.</p></div>
+      <div class="example-grid">
+        <article class="example-card">
+          <div class="example-context"><h3>Misty lake reveal</h3><p>Still frame: wide alpine lake, bridge in the foreground, fog around distant peaks.</p></div>
+          <pre class="prompt-output">Starting frame: a still alpine lake at dawn with a wooden bridge in the foreground and misty granite peaks behind it. Camera movement: one slow forward push along the bridge. Subject motion: no people; the landscape remains stable. Environmental motion: fog drifts gently left to right, pine branches move slightly, and small ripples spread across the water. Over 5 seconds, warm sunlight gradually reaches the bridge. End state: the camera settles near the bridge center with the mountain reflection still intact. Negative motion: no cuts, shake, warping, fast zoom, or changing geography.</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Quiet editorial portrait</h3><p>Still frame: seated subject by a window, shallow depth of field, soft side light.</p></div>
+          <pre class="prompt-output">Starting frame: a seated editorial portrait beside a softly lit window. Camera movement: a subtle 10-degree clockwise orbit at eye level. Subject motion: the subject blinks once, breathes naturally, and turns their gaze slightly toward the window while keeping the same expression and identity. Environmental motion: the curtain lifts gently in a light breeze. Duration: 4 seconds. End state: a three-quarter view with the face in sharp focus. Negative motion: no face morphing, lip movement, sudden head turn, extra fingers, flicker, or camera shake.</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Premium product shot</h3><p>Still frame: perfume bottle on dark stone, narrow rim light, light atmospheric haze.</p></div>
+          <pre class="prompt-output">Starting frame: a clear glass perfume bottle centered on black stone with a narrow silver rim light. Camera movement: one smooth left-to-right slider move while maintaining the bottle at center frame. Subject motion: the bottle remains perfectly still. Environmental motion: a thin veil of haze passes behind it and the highlight travels slowly across the glass. Duration: 4 seconds. End state: the camera stops at a slight three-quarter angle, revealing the bottle depth. Negative motion: no label changes, liquid movement, duplicate objects, focus pulsing, cuts, or distorted glass.</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>A dependable motion-prompt structure</h2></div>
+      <ul class="tip-list">
+        <li><strong>Starting frame:</strong> summarize the subject, framing, environment, and lighting that the video must preserve.</li>
+        <li><strong>Motion plan:</strong> specify one camera movement, separate subject motion, and one or two environmental actions with pace and direction.</li>
+        <li><strong>End state and constraints:</strong> describe the final composition and add a brief negative motion list for likely artifacts.</li>
+      </ul>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Image-to-video prompt FAQ</h2></div>
+      <div class="faq-list">
+        <article class="faq-item"><h3>Which AI video model is this for?</h3><p>The structured result is model-neutral. You can adapt it to tools that accept an image plus text by shortening or rearranging fields for that model.</p></article>
+        <article class="faq-item"><h3>Why use only one camera move?</h3><p>A single readable move reduces contradictory geometry and leaves more of the model's capacity for stable subject and environmental motion.</p></article>
+        <article class="faq-item"><h3>What belongs in a negative motion prompt?</h3><p>Prioritize motion defects: cuts, shake, flicker, morphing, identity drift, duplicate objects, changing text, and physically impossible movement.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Explore other prompt formats</h2></div>
+      <div class="related-grid">
+        <a class="related-card" href="/midjourney-image-to-prompt/"><strong>Midjourney image to prompt</strong><p>Build concise still-image prompts with useful aspect-ratio guidance.</p></a>
+        <a class="related-card" href="/nano-banana-image-to-prompt/"><strong>Nano Banana image to prompt</strong><p>Write a precise visual edit while protecting identity and composition.</p></a>
+        <a class="related-card" href="/"><strong>All prompt formats</strong><p>Try Flux, Stable Diffusion, DALL·E, JSON, and general structured prompts.</p></a>
+      </div>
+    </section>
+
+    <section class="final-cta"><h2>Give your still image a coherent motion plan</h2><p>Upload the starting frame, select Image-to-Video, and get structured camera, subject, environment, timing, end-state, and motion-constraint guidance.</p><a class="primary-link" href="/?format=video#generator">Generate an image-to-video prompt</a></section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 Img2Prompt</span><nav class="footer-links" aria-label="Footer"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a></nav></div></footer>
+</body>
+</html>
