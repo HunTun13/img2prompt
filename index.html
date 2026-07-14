@@ -951,10 +951,15 @@ footer {
 
 <script>
 /* ===== STATE ===== */
+const PUBLIC_FORMATS = new Set([
+  'general', 'midjourney', 'flux', 'stable-diffusion',
+  'nano-banana', 'dalle', 'video', 'json'
+]);
+const requestedFormat = new URLSearchParams(window.location.search).get('format');
 const state = {
   imageFile: null,
   imageDataUrl: null,
-  format: 'general',
+  format: PUBLIC_FORMATS.has(requestedFormat) ? requestedFormat : 'general',
   detail: 'detailed',
   turnstileToken: null,
   lastResult: null
@@ -976,6 +981,10 @@ const copyBtn     = document.getElementById('copy-btn');
 const regenBtn    = document.getElementById('regenerate-btn');
 const dlBtn       = document.getElementById('download-btn');
 const toast       = document.getElementById('toast');
+
+document.querySelectorAll('#format-pills .pill').forEach(pill => {
+  pill.classList.toggle('active', pill.dataset.val === state.format);
+});
 
 /* ===== ANALYTICS ===== */
 function trackEvent(name, params = {}) {
