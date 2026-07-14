@@ -64,3 +64,38 @@ test('accurately discloses third-party image processing', () => {
     'privacy copy must not make an unsupported absolute retention promise',
   );
 });
+
+test('publishes complete trust pages with unique canonical metadata', () => {
+  const pages = [
+    { directory: 'privacy', title: /Privacy Policy \| Img2Prompt/, h1: /Privacy Policy/, canonical: 'https://img2prompt.app/privacy/' },
+    { directory: 'terms', title: /Terms of Use \| Img2Prompt/, h1: /Terms of Use/, canonical: 'https://img2prompt.app/terms/' },
+    { directory: 'contact', title: /Contact \| Img2Prompt/, h1: /Contact Img2Prompt/, canonical: 'https://img2prompt.app/contact/' },
+  ];
+
+  assert.equal(fs.existsSync(path.join(root, 'assets', 'content-pages.css')), true);
+
+  for (const page of pages) {
+    const pagePath = path.join(root, page.directory, 'index.html');
+    assert.equal(fs.existsSync(pagePath), true, `${page.directory} page should exist`);
+    const pageHtml = fs.readFileSync(pagePath, 'utf8');
+    assert.match(pageHtml, page.title);
+    assert.match(pageHtml, new RegExp(`<h1[^>]*>${page.h1.source}</h1>`));
+    assert.match(pageHtml, new RegExp(`<link rel="canonical" href="${page.canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
+    assert.match(pageHtml, /assets\/content-pages\.css/);
+  }
+
+  const privacyHtml = fs.readFileSync(path.join(root, 'privacy', 'index.html'), 'utf8');
+  assert.match(privacyHtml, /configured AI service providers/i);
+  assert.match(privacyHtml, /does not sell/i);
+  assert.match(privacyHtml, /Cloudflare Turnstile/i);
+});
+
+test('links trust pages from the homepage footer', () => {
+  assert.match(html, /href="\/privacy\/"[^>]*>Privacy</);
+  assert.match(html, /href="\/terms\/"[^>]*>Terms</);
+  assert.match(html, /href="\/contact\/"[^>]*>Contact</);
+});
+
+test('does not publish unverifiable ratings or review counts', () => {
+  assert.doesNotMatch(html, /aggregateRating|reviewCount|ratingValue/);
+});
