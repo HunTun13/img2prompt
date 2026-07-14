@@ -113,4 +113,3 @@
 - [ ] Confirm the Vercel commit status is successful.
 - [ ] Verify HTTPS status, homepage, all new pages, sitemap, robots.txt, and mobile rendering on `https://img2prompt.app`.
 - [ ] Record the deployed milestone and the two remaining user-supplied configuration items: Google verification tag and GA4 measurement ID.
-

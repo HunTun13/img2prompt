@@ -61,4 +61,3 @@ Work is committed on `codex/site-growth-foundation`, pushed, reviewed through a 
 - Privacy statements accurately disclose third-party processing.
 - Three model pages are accessible, indexable, internally linked, and listed in the sitemap.
 - All automated checks pass and the Vercel deployment reports success.
-
