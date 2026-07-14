@@ -979,6 +979,15 @@ const regenBtn    = document.getElementById('regenerate-btn');
 const dlBtn       = document.getElementById('download-btn');
 const toast       = document.getElementById('toast');
 
+/* ===== ANALYTICS ===== */
+function trackEvent(name, params = {}) {
+  if (typeof window.gtag !== 'function') return;
+  window.gtag('event', name, {
+    app_name: 'img2prompt',
+    ...params
+  });
+}
+
 /* ===== TURNSTILE ===== */
 function onTurnstileVerified(token) {
   state.turnstileToken = token;
@@ -1015,7 +1024,14 @@ function handleFile(file) {
   if (!allowed.includes(file.type)) { showToast('Only JPG, PNG, or WEBP images are supported.'); return; }
   if (file.size > 10 * 1024 * 1024) { showToast('Image must be under 10 MB.'); return; }
   const reader = new FileReader();
-  reader.onload = e => showPreview(e.target.result);
+  reader.onload = e => {
+    showPreview(e.target.result);
+    trackEvent('image_upload', {
+      source: 'file',
+      file_type: file.type,
+      file_size_kb: Math.round(file.size / 1024)
+    });
+  };
   reader.readAsDataURL(file);
   state.imageFile = file;
 }
@@ -1030,6 +1046,7 @@ function loadFromUrl() {
   // Display via img src — CORS-safe for display; API backend will re-fetch
   showPreview(url);
   state.imageFile = null; // URL mode
+  trackEvent('image_url_load', { source: 'url' });
 }
 
 /* ===== PREVIEW ===== */
@@ -1065,6 +1082,7 @@ document.getElementById('format-pills').addEventListener('click', e => {
   document.querySelectorAll('#format-pills .pill').forEach(p => p.classList.remove('active'));
   pill.classList.add('active');
   state.format = pill.dataset.val;
+  trackEvent('format_select', { format: state.format });
 });
 
 document.getElementById('detail-pills').addEventListener('click', e => {
@@ -1073,6 +1091,7 @@ document.getElementById('detail-pills').addEventListener('click', e => {
   document.querySelectorAll('#detail-pills .pill').forEach(p => p.classList.remove('active'));
   pill.classList.add('active');
   state.detail = pill.dataset.val;
+  trackEvent('detail_select', { detail: state.detail });
 });
 
 /* ===== GENERATE ===== */
@@ -1080,14 +1099,27 @@ generateBtn.addEventListener('click', async () => {
   if (!state.imageDataUrl || !state.turnstileToken) return;
   generateBtn.classList.add('loading');
   generateBtn.disabled = true;
+  trackEvent('prompt_generate_start', {
+    format: state.format,
+    detail: state.detail
+  });
 
   try {
     const result = await callGeneratePromptAPI(state.imageDataUrl, state.format, state.detail, state.turnstileToken);
     state.lastResult = result;
     displayResults(result, state.format);
+    trackEvent('prompt_generate_success', {
+      format: state.format,
+      detail: state.detail
+    });
   } catch (err) {
     results.style.display = 'none';
     showToast(`Generation failed: ${err.message || 'Please try again.'}`);
+    trackEvent('prompt_generate_error', {
+      format: state.format,
+      detail: state.detail,
+      error_message: err.message || 'unknown'
+    });
   } finally {
     generateBtn.classList.remove('loading');
     state.turnstileToken = null;
@@ -1313,6 +1345,7 @@ dlBtn.addEventListener('click', () => {
   a.href = URL.createObjectURL(blob);
   a.download = 'prompt-from-image.txt';
   a.click();
+  trackEvent('prompt_download', { format: state.format });
 });
 
 function copyText(text) {
@@ -1322,6 +1355,10 @@ function copyText(text) {
     fallbackCopy(text);
   }
   showToast('Copied to clipboard!');
+  trackEvent('prompt_copy', {
+    format: state.format,
+    text_length: String(text || '').length
+  });
 }
 
 function fallbackCopy(text) {
