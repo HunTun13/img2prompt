@@ -338,3 +338,60 @@ test('rejects unknown model formats before calling an AI provider', async () => 
 
   assert.equal(fetchCalls, 0);
 });
+
+async function captureProviderPrompt(format) {
+  let providerPrompt = '';
+  const result = {
+    mainPrompt: 'A faithful description of the visible scene.',
+    modelPrompt: 'A model-ready prompt.',
+    negativePrompt: 'unwanted artifacts',
+    styleKeywords: ['faithful'],
+    lighting: 'natural light',
+    camera: 'eye level',
+    colorPalette: 'neutral',
+  };
+
+  await withGatewayEnvironment(async (_url, options) => {
+    const body = JSON.parse(options.body);
+    providerPrompt = body.messages[0].content[1].text;
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify(result) } }],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }, async () => {
+    const request = createRequest();
+    request.body.format = format;
+    const response = createResponse();
+    await handler(request, response);
+    assert.equal(response.statusCode, 200);
+  });
+
+  return providerPrompt;
+}
+
+test('anchors every generated prompt to visible evidence instead of invented details', async () => {
+  const prompt = await captureProviderPrompt('general');
+  assert.match(prompt, /visible evidence/i);
+  assert.match(prompt, /do not guess[^\n]*(?:identity|brand|text)/i);
+});
+
+test('uses current Midjourney-specific prompt guidance', async () => {
+  const prompt = await captureProviderPrompt('midjourney');
+  assert.match(prompt, /--ar/);
+  assert.match(prompt, /--no/);
+  assert.match(prompt, /do not add[^\n]*--v/i);
+});
+
+test('uses edit-aware Nano Banana prompt guidance', async () => {
+  const prompt = await captureProviderPrompt('nano-banana');
+  assert.match(prompt, /preserve (?:the )?(?:subject's )?identity/i);
+  assert.match(prompt, /what must not change/i);
+  assert.match(prompt, /edit instruction/i);
+});
+
+test('uses motion-specific image-to-video prompt guidance', async () => {
+  const prompt = await captureProviderPrompt('video');
+  assert.match(prompt, /starting frame/i);
+  assert.match(prompt, /end state/i);
+  assert.match(prompt, /one (?:clear )?camera move/i);
+  assert.match(prompt, /avoid (?:abrupt )?(?:cuts|scene changes)/i);
+});

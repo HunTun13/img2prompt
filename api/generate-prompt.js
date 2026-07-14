@@ -37,6 +37,7 @@ class ClientInputError extends Error {
 const BASE_SYSTEM = `You are an expert AI image prompt engineer.
 Analyze the provided image and generate a high-quality prompt to recreate a visually similar image.
 Do NOT claim this is the original prompt — generate the best reusable equivalent.
+Base every field on visible evidence. Do not guess a person's identity, a brand, or unreadable text.
 Return ONLY a valid JSON object, no markdown fences, no explanation.`;
 
 const JSON_SCHEMA = `{
@@ -51,12 +52,12 @@ const JSON_SCHEMA = `{
 
 const MODEL_GUIDE = {
   general:            "Use clear natural language. Cover subject, environment, style, mood, technical details.",
-  midjourney:         "Use concise descriptive phrases separated by commas. Infer an appropriate --ar value from the image. Add --raw only when a less opinionated result helps. Do not add a --v version flag.",
+  midjourney:         "Use concise descriptive phrases separated by commas. Infer an appropriate --ar value from the image. Add --raw only when a less opinionated result helps. Put exclusions in a short --no parameter when useful. Do not add a --v version flag.",
   flux:               "Use flowing natural-language sentences. Avoid tag-heavy comma lists.",
   "stable-diffusion": "Use weighted parenthesis tags like (subject:1.3). Include positive and negative blocks.",
-  "nano-banana":      "Prioritize subject consistency. Use: Subject + Environment + Style + Mood structure.",
+  "nano-banana":      "Write a direct natural-language edit instruction. Preserve the subject's identity and defining features. State the requested change, the surrounding context, and what must not change. For pure recreation, describe the subject, environment, composition, lighting, and style without inventing details.",
   dalle:              "Use clear descriptive paragraphs. State subject, scene, and style explicitly.",
-  video:              "Include camera movement, subject motion, environmental dynamics, suggested duration.",
+  video:              "Treat the image as the starting frame. Describe one clear camera move, subject motion, environmental motion, timing, and the intended end state. Keep motion physically coherent and avoid abrupt cuts or unrelated scene changes.",
   json:               "Make modelPrompt a stringified JSON with fields: subject, environment, style, lighting, camera, mood, colors.",
 };
 
