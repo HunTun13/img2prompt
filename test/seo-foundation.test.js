@@ -5,6 +5,16 @@ const path = require('node:path');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const gaMeasurementId = 'G-4R1VYKF6P0';
+const publicHtmlPages = [
+  'index.html',
+  'midjourney-image-to-prompt/index.html',
+  'nano-banana-image-to-prompt/index.html',
+  'image-to-video-prompt/index.html',
+  'privacy/index.html',
+  'terms/index.html',
+  'contact/index.html',
+];
 
 test('publishes a root sitemap with canonical production URLs', () => {
   const sitemapPath = path.join(root, 'sitemap.xml');
@@ -43,6 +53,14 @@ test('front-end exposes safe analytics event hooks for the conversion funnel', (
   ].forEach(eventName => {
     assert.match(html, new RegExp(`trackEvent\\('${eventName}'`), `${eventName} should be tracked`);
   });
+});
+
+test('loads Google Analytics 4 on every public page', () => {
+  for (const page of publicHtmlPages) {
+    const pageHtml = fs.readFileSync(path.join(root, page), 'utf8');
+    assert.match(pageHtml, new RegExp(`https://www\\.googletagmanager\\.com/gtag/js\\?id=${gaMeasurementId}`), `${page} should load the GA4 tag`);
+    assert.match(pageHtml, new RegExp(`gtag\\('config', '${gaMeasurementId}'\\)`), `${page} should configure the GA4 measurement ID`);
+  }
 });
 
 test('uses current model guidance and consistent public branding', () => {
@@ -88,6 +106,7 @@ test('publishes complete trust pages with unique canonical metadata', () => {
   assert.match(privacyHtml, /configured AI service providers/i);
   assert.match(privacyHtml, /does not sell/i);
   assert.match(privacyHtml, /Cloudflare Turnstile/i);
+  assert.match(privacyHtml, /Google Analytics/i);
 });
 
 test('links trust pages from the homepage footer', () => {
