@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 36" role="img" aria-labelledby="title desc">
+  <title id="title">Img2Prompt brand mark</title>
+  <desc id="desc">An image frame changing into three lines of text.</desc>
+  <rect x="1" y="3" width="29" height="30" rx="8" fill="#171714"/>
+  <circle cx="10" cy="12" r="3" fill="#E85D3F"/>
+  <path d="M6 27l7.2-8.4 4.5 4.7 4.7-6 3.6 4.2V27H6z" fill="#FFFDF8"/>
+  <path d="M35 9h12M35 18h9M35 27h12" fill="none" stroke="#171714" stroke-width="3" stroke-linecap="round"/>
+</svg>

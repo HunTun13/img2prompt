@@ -4,8 +4,8 @@
   --line: #e5e7eb;
   --surface: #ffffff;
   --soft: #f7f7fb;
-  --accent: #6d4aff;
-  --accent-dark: #5033d6;
+  --accent: #e85d3f;
+  --accent-dark: #c9472d;
 }
 
 * { box-sizing: border-box; }
@@ -53,9 +53,20 @@ a:hover { text-decoration-thickness: 2px; }
   font-weight: 800;
   text-decoration: none;
   letter-spacing: -.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.brand span { color: var(--accent); }
+.brand::before {
+  content: "";
+  width: 40px;
+  height: 30px;
+  flex: 0 0 auto;
+  background: url('/assets/brand-mark.svg') center / contain no-repeat;
+}
+
+.brand span { color: inherit; }
 
 .header-cta,
 .primary-link {
@@ -140,7 +151,7 @@ li + li { margin-top: 8px; }
   padding: 18px 20px;
   border-left: 4px solid var(--accent);
   border-radius: 8px;
-  background: #f2efff;
+  background: #fff1ec;
 }
 
 .contact-panel {
