@@ -465,15 +465,32 @@ header {
 #examples { padding-top: 96px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .examples-intro { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 42px; }
 .examples-note { max-width: 330px; color: var(--text-4); font-size: 13px; line-height: 1.65; }
-.examples-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.example-card { overflow: hidden; background: var(--bg); border: 1px solid var(--border); border-radius: 18px; }
-.example-art { aspect-ratio: 4 / 3; overflow: hidden; border-bottom: 1px solid var(--border); }
-.example-art svg { width: 100%; height: 100%; display: block; }
-.example-body { padding: 20px; }
+.case-list { display: grid; gap: 22px; }
+.case-study {
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(290px, .72fr);
+  overflow: hidden; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 20px;
+}
+.case-study:nth-child(even) { grid-template-columns: minmax(290px, .72fr) minmax(0, 1.5fr); }
+.case-study:nth-child(even) .case-pair { order: 2; }
+.case-study:nth-child(even) .case-body { order: 1; border-left: 0; border-right: 1px solid var(--border); }
+.case-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-height: 350px; }
+.case-figure { position: relative; min-width: 0; overflow: hidden; background: var(--bg-2); }
+.case-figure + .case-figure { border-left: 1px solid rgba(255,255,255,.35); }
+.case-figure img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.case-label {
+  position: absolute; top: 12px; left: 12px; z-index: 1;
+  padding: 5px 8px; border-radius: 6px; color: white;
+  background: rgba(23,23,20,.76); backdrop-filter: blur(8px);
+  font-size: 10px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase;
+}
+.case-body { display: flex; flex-direction: column; justify-content: center; padding: 26px; border-left: 1px solid var(--border); }
 .example-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .example-kicker { color: var(--text-4); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
 .model-tag { border: 1px solid var(--border-2); border-radius: var(--radius-full); padding: 3px 8px; color: var(--text-3); font-size: 10px; font-weight: 700; }
-.example-prompt { min-height: 116px; color: var(--text-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.65; }
+.case-body h3 { margin-bottom: 12px; font-size: 19px; line-height: 1.3; letter-spacing: -.02em; }
+.example-prompt { color: var(--text-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.65; }
+.case-disclosure { margin-top: 14px; color: var(--text-4); font-size: 10px; line-height: 1.5; }
 .copy-sample { margin-top: 16px; padding: 0; border: 0; background: none; color: var(--primary); font-size: 12px; font-weight: 700; }
 .copy-sample:hover { text-decoration: underline; }
 
@@ -599,10 +616,10 @@ footer {
   section { padding: 64px 0; }
   .header-nav { display: none; }
   .examples-intro { align-items: flex-start; flex-direction: column; gap: 12px; }
-  .examples-grid { grid-template-columns: 1fr; }
-  .example-card { display: grid; grid-template-columns: minmax(150px, .78fr) 1.2fr; }
-  .example-art { aspect-ratio: auto; border-bottom: 0; border-right: 1px solid var(--border); }
-  .example-prompt { min-height: 0; }
+  .case-study, .case-study:nth-child(even) { grid-template-columns: 1fr; }
+  .case-study:nth-child(even) .case-pair, .case-study:nth-child(even) .case-body { order: initial; }
+  .case-study:nth-child(even) .case-body, .case-body { border: 0; border-top: 1px solid var(--border); }
+  .case-pair { min-height: 300px; }
   .options-grid { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; border-top: 0; }
   .step, .step + .step { border-right: 0; border-top: 1px solid var(--border); padding: 22px 0; }
@@ -626,8 +643,8 @@ footer {
   .tool-card { padding: 16px; border-radius: 18px; }
   .tool-card::before { display: none; }
   #drop-zone { padding: 30px 14px; }
-  .example-card { display: block; }
-  .example-art { aspect-ratio: 4 / 3; border-right: 0; border-bottom: 1px solid var(--border); }
+  .case-pair { min-height: 220px; }
+  .case-body { padding: 20px; }
   .hero-sub { font-size: 15px; }
 }
 </style>
@@ -763,80 +780,75 @@ footer {
   </div>
 </section>
 
-<!-- REALISTIC OUTPUT EXAMPLES -->
+<!-- AI ART CASE STUDIES -->
 <section id="examples">
   <div class="container-wide">
     <div class="examples-intro">
       <div>
-        <p class="section-label">Example Outputs</p>
-        <h2 class="section-title">See what the tool pays attention to</h2>
-        <p class="section-sub">A useful prompt is more than a caption. It preserves the visual decisions that make a reference image distinctive.</p>
+        <p class="section-label">AI Art Case Wall</p>
+        <h2 class="section-title">One visual idea, recreated from a prompt</h2>
+        <p class="section-sub">Each pair keeps the subject, composition, lighting, and style while producing a genuinely new image.</p>
       </div>
-      <p class="examples-note">These compact samples show the type of structure Img2Prompt produces. Your result changes with the reference image, model format, and detail level.</p>
+      <p class="examples-note">Six original AI-generated images, grouped into three controlled comparisons. The prompt shown with each pair is ready to copy and test.</p>
     </div>
-    <div class="examples-grid">
-      <article class="example-card">
-        <div class="example-art" aria-label="Minimal product photography illustration">
-          <svg viewBox="0 0 400 300" role="img" aria-labelledby="product-example-title">
-            <title id="product-example-title">Minimal product bottle on a warm studio set</title>
-            <rect width="400" height="300" fill="#ded7cb"/>
-            <circle cx="324" cy="48" r="108" fill="#c6b5ff" opacity=".72"/>
-            <path d="M0 231C93 205 178 211 253 231s111 23 147 16v53H0z" fill="#b9ad9e"/>
-            <ellipse cx="204" cy="241" rx="76" ry="19" fill="#4f493f" opacity=".18"/>
-            <rect x="166" y="84" width="76" height="145" rx="18" fill="#f8f2e8"/>
-            <rect x="181" y="57" width="46" height="38" rx="8" fill="#282725"/>
-            <rect x="178" y="134" width="52" height="43" rx="3" fill="#E85D3F"/>
-            <path d="M188 147h32M188 156h22M188 165h28" stroke="#f7f6f2" stroke-width="3" opacity=".9"/>
-          </svg>
+    <div class="case-list">
+      <article class="case-study">
+        <div class="case-pair" aria-label="Cyberpunk city prompt comparison">
+          <figure class="case-figure">
+            <span class="case-label">Reference</span>
+            <img src="/assets/examples/cyberpunk-reference.webp" width="1200" height="900" loading="lazy" alt="Bicycle courier in a rain-soaked futuristic city at night">
+          </figure>
+          <figure class="case-figure">
+            <span class="case-label">Recreated</span>
+            <img src="/assets/examples/cyberpunk-recreated.webp" width="1200" height="900" loading="lazy" alt="New AI interpretation of the same futuristic courier scene">
+          </figure>
         </div>
-        <div class="example-body">
-          <div class="example-meta"><span class="example-kicker">Product still life</span><span class="model-tag">Flux</span></div>
-          <p class="example-prompt">Minimal studio product photograph of a matte ivory skincare bottle, rust label, warm plaster backdrop, soft side light, restrained shadows, editorial composition, tactile natural materials.</p>
-          <button class="copy-sample" data-sample="Minimal studio product photograph of a matte ivory skincare bottle with a rust label, warm plaster backdrop, soft side light, restrained shadows, editorial composition, and tactile natural materials.">Copy sample prompt</button>
-        </div>
-      </article>
-
-      <article class="example-card">
-        <div class="example-art" aria-label="Cinematic mountain landscape illustration">
-          <svg viewBox="0 0 400 300" role="img" aria-labelledby="landscape-example-title">
-            <title id="landscape-example-title">Misty mountains above a quiet lake at dawn</title>
-            <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#273549"/><stop offset="1" stop-color="#d99c6a"/></linearGradient></defs>
-            <rect width="400" height="300" fill="url(#sky)"/>
-            <circle cx="302" cy="75" r="28" fill="#ffd7a1" opacity=".88"/>
-            <path d="M0 185L86 88l70 87 66-108 100 118 48-67 30 42v140H0z" fill="#26313a"/>
-            <path d="M0 204l82-78 55 68 85-91 90 102 54-50 34 34v111H0z" fill="#43545b" opacity=".78"/>
-            <rect y="211" width="400" height="89" fill="#667f82"/>
-            <path d="M0 240c80-13 129-11 198 0s137 14 202-2" fill="none" stroke="#d7b48e" stroke-width="4" opacity=".65"/>
-            <path d="M152 238l58-23 68 24-61 11z" fill="#272723"/>
-          </svg>
-        </div>
-        <div class="example-body">
-          <div class="example-meta"><span class="example-kicker">Atmospheric landscape</span><span class="model-tag">Midjourney</span></div>
-          <p class="example-prompt">Misty granite peaks at dawn, still alpine lake, narrow wooden jetty, layered fog, muted blue-gray palette with warm amber light, cinematic wide composition, natural depth.</p>
-          <button class="copy-sample" data-sample="Misty granite peaks at dawn, a still alpine lake and narrow wooden jetty, layered fog, muted blue-gray palette with warm amber light, cinematic wide composition, natural depth --ar 16:9 --style raw">Copy sample prompt</button>
+        <div class="case-body">
+          <div class="example-meta"><span class="example-kicker">Case 01 · Cinematic city</span><span class="model-tag">Flux-style</span></div>
+          <h3>Rain-slick future city</h3>
+          <p class="example-prompt">A lone bicycle courier in a translucent raincoat waits at a crosswalk in a futuristic megacity at night. Towering dark buildings, cyan and amber neon reflected across rain-soaked asphalt, drifting street steam, and a distant elevated tram. Cinematic realistic concept art, street-level wide shot, strong depth, atmospheric haze.</p>
+          <button class="copy-sample" data-sample="A lone bicycle courier in a translucent raincoat waits at a crosswalk in a futuristic megacity at night. Towering dark buildings, cyan and amber neon reflected across rain-soaked asphalt, drifting street steam, and a distant elevated tram. Cinematic realistic concept art, street-level wide shot, strong depth, atmospheric haze.">Copy this prompt</button>
+          <p class="case-disclosure">Both images are original AI-generated case-study assets created with OpenAI image generation.</p>
         </div>
       </article>
 
-      <article class="example-card">
-        <div class="example-art" aria-label="Quiet modern interior illustration">
-          <svg viewBox="0 0 400 300" role="img" aria-labelledby="interior-example-title">
-            <title id="interior-example-title">Warm modern reading corner with chair and plant</title>
-            <rect width="400" height="300" fill="#e8e0d3"/>
-            <rect x="32" y="27" width="146" height="151" fill="#f7f2e8"/>
-            <path d="M105 27v151M32 102h146" stroke="#b8ab99" stroke-width="6"/>
-            <rect y="232" width="400" height="68" fill="#b79877"/>
-            <ellipse cx="264" cy="245" rx="84" ry="17" fill="#5c4d3e" opacity=".15"/>
-            <path d="M207 153h95v73h-95z" fill="#956f57"/>
-            <path d="M197 146c0-18 14-32 32-32h48c18 0 32 14 32 32v16H197z" fill="#a77b5f"/>
-            <path d="M216 224l-12 32M290 224l13 32" stroke="#4f463e" stroke-width="7"/>
-            <path d="M343 103c-29 22-35 56-26 100M326 130c-36-15-44-45-31-76M329 148c24-25 48-28 65-20" fill="none" stroke="#55705a" stroke-width="10" stroke-linecap="round"/>
-            <rect x="311" y="196" width="49" height="43" rx="6" fill="#65564b"/>
-          </svg>
+      <article class="case-study">
+        <div class="case-pair" aria-label="Fantasy whale prompt comparison">
+          <figure class="case-figure">
+            <span class="case-label">Reference</span>
+            <img src="/assets/examples/fantasy-reference.webp" width="1200" height="900" loading="lazy" alt="Bioluminescent whale flying above floating temples at sunrise">
+          </figure>
+          <figure class="case-figure">
+            <span class="case-label">Recreated</span>
+            <img src="/assets/examples/fantasy-recreated.webp" width="1200" height="900" loading="lazy" alt="New AI interpretation of the whale and floating temple scene">
+          </figure>
         </div>
-        <div class="example-body">
-          <div class="example-meta"><span class="example-kicker">Interior reference</span><span class="model-tag">Stable Diffusion</span></div>
-          <p class="example-prompt">Warm modern reading corner, low rust armchair beside a tall leafy plant, limewashed walls, oak floor, diffused window light, quiet editorial styling, eye-level framing.</p>
-          <button class="copy-sample" data-sample="(warm modern reading corner:1.3), low rust armchair, tall leafy plant, limewashed walls, oak floor, diffused window light, quiet editorial styling, eye-level framing, natural materials">Copy sample prompt</button>
+        <div class="case-body">
+          <div class="example-meta"><span class="example-kicker">Case 02 · Epic fantasy</span><span class="model-tag">Midjourney-style</span></div>
+          <h3>Whale above floating temples</h3>
+          <p class="example-prompt">A colossal bioluminescent blue whale glides through a sunrise sky above floating stone temples and waterfalls, tiny birds circling its fins and clouds drifting between the islands. Painterly epic fantasy concept art, whale sweeping diagonally across the upper frame, golden dawn backlight, luminous turquoise markings, serene and awe-inspiring.</p>
+          <button class="copy-sample" data-sample="A colossal bioluminescent blue whale glides through a sunrise sky above floating stone temples and waterfalls, tiny birds circling its fins and clouds drifting between the islands. Painterly epic fantasy concept art, whale sweeping diagonally across the upper frame, golden dawn backlight, luminous turquoise markings, serene and awe-inspiring.">Copy this prompt</button>
+          <p class="case-disclosure">Both images are original AI-generated case-study assets created with OpenAI image generation.</p>
+        </div>
+      </article>
+
+      <article class="case-study">
+        <div class="case-pair" aria-label="Anime shrine guardian prompt comparison">
+          <figure class="case-figure">
+            <span class="case-label">Reference</span>
+            <img src="/assets/examples/anime-reference.webp" width="1200" height="900" loading="lazy" alt="Anime shrine guardian with a fox mask in falling snow">
+          </figure>
+          <figure class="case-figure">
+            <span class="case-label">Recreated</span>
+            <img src="/assets/examples/anime-recreated.webp" width="1200" height="900" loading="lazy" alt="New AI interpretation of the snowy shrine guardian scene">
+          </figure>
+        </div>
+        <div class="case-body">
+          <div class="example-meta"><span class="example-kicker">Case 03 · Anime key visual</span><span class="model-tag">SD-style</span></div>
+          <h3>Snowy shrine guardian</h3>
+          <p class="example-prompt">Anime key visual of a young shrine guardian holding a white fox mask beside her face beneath a vermilion torii gate during snowfall. Deep red scarf, dark indigo winter robes, warm stone lanterns, clean expressive linework, refined cel shading, medium portrait, blue winter twilight, quiet and determined.</p>
+          <button class="copy-sample" data-sample="Anime key visual of a young shrine guardian holding a white fox mask beside her face beneath a vermilion torii gate during snowfall. Deep red scarf, dark indigo winter robes, warm stone lanterns, clean expressive linework, refined cel shading, medium portrait, blue winter twilight, quiet and determined.">Copy this prompt</button>
+          <p class="case-disclosure">Both images are original AI-generated case-study assets created with OpenAI image generation.</p>
         </div>
       </article>
     </div>
