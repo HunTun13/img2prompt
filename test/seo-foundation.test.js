@@ -11,6 +11,7 @@ const publicHtmlPages = [
   'midjourney-image-to-prompt/index.html',
   'nano-banana-image-to-prompt/index.html',
   'image-to-video-prompt/index.html',
+  'stable-diffusion-image-to-prompt/index.html',
   'privacy/index.html',
   'terms/index.html',
   'contact/index.html',

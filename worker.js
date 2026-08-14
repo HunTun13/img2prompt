@@ -34,7 +34,7 @@ const MODEL_GUIDE = {
   flux:
     "Use flowing natural-language sentences. Avoid tag-heavy comma lists. Be descriptive and specific.",
   "stable-diffusion":
-    "Use weighted parenthesis tags like (subject:1.3). For modelPrompt include both positive tags and a separate negative block.",
+    "Write modelPrompt as a clear positive prompt grounded in visible evidence: subject, composition, environment, medium, lighting, and palette. Write the negative prompt field as a short, image-specific list of unwanted outcomes. Do not invent checkpoint or LoRA trigger words and do not force arbitrary weighting syntax; those depend on the user's actual Stable Diffusion workflow.",
   "nano-banana":
     "Prioritize subject consistency and scene editability. Use: Subject + Environment + Style + Mood structure.",
   dalle:

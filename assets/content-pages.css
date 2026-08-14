@@ -293,6 +293,8 @@ li + li { margin-top: 8px; }
 .related-card { color: var(--ink); text-decoration: none; transition: transform .18s, border-color .18s; }
 .related-card:hover { transform: translateY(-2px); border-color: var(--accent); }
 
+.related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
 .final-cta {
   margin-top: 70px;
   padding: clamp(28px, 6vw, 52px);

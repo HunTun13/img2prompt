@@ -381,6 +381,16 @@ test('uses current Midjourney-specific prompt guidance', async () => {
   assert.match(prompt, /do not add[^\n]*--v/i);
 });
 
+test('uses focused Stable Diffusion guidance without forcing arbitrary weights', async () => {
+  const prompt = await captureProviderPrompt('stable-diffusion');
+  assert.match(prompt, /positive prompt/i);
+  assert.match(prompt, /negative prompt/i);
+  assert.match(prompt, /checkpoint/i);
+  assert.match(prompt, /LoRA/i);
+  assert.match(prompt, /visible evidence/i);
+  assert.doesNotMatch(prompt, /weighted parenthesis|subject:1\.3/i);
+});
+
 test('uses edit-aware Nano Banana prompt guidance', async () => {
   const prompt = await captureProviderPrompt('nano-banana');
   assert.match(prompt, /preserve (?:the )?(?:subject's )?identity/i);

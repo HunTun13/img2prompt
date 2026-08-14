@@ -31,7 +31,7 @@ const MODEL_GUIDE = {
   general:           "Use clear natural language. Cover subject, environment, style, mood, technical details.",
   midjourney:        "Use concise descriptive phrases separated by commas. Infer an appropriate --ar value from the image. Add --raw only when a less opinionated result helps. Put exclusions in a short --no parameter when useful. Do not add a --v version flag.",
   flux:              "Use flowing natural-language sentences. Avoid tag-heavy comma lists. Be descriptive and specific.",
-  "stable-diffusion":"Use weighted parenthesis tags like (subject:1.3). For modelPrompt include both positive tags and a separate negative block.",
+  "stable-diffusion":"Write modelPrompt as a clear positive prompt grounded in visible evidence: subject, composition, environment, medium, lighting, and palette. Write the negative prompt field as a short, image-specific list of unwanted outcomes. Do not invent checkpoint or LoRA trigger words and do not force arbitrary weighting syntax; those depend on the user's actual Stable Diffusion workflow.",
   "nano-banana":     "Write a direct natural-language edit instruction. Preserve the subject's identity and defining features. State the requested change, the surrounding context, and what must not change. For pure recreation, describe the subject, environment, composition, lighting, and style without inventing details.",
   dalle:             "Use clear descriptive paragraphs. State subject, scene, and style explicitly. No special syntax needed.",
   video:             "Treat the image as the starting frame. Describe one clear camera move, subject motion, environmental motion, timing, and the intended end state. Keep motion physically coherent and avoid abrupt cuts or unrelated scene changes.",

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4R1VYKF6P0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4R1VYKF6P0');
+  </script>
+  <title>Stable Diffusion Image to Prompt Generator | Img2Prompt</title>
+  <meta name="description" content="Turn a reference image into a Stable Diffusion positive prompt, focused negative prompt, composition notes, and practical A1111 or ComfyUI guidance.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://img2prompt.app/stable-diffusion-image-to-prompt/">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Stable Diffusion Image to Prompt Generator | Img2Prompt">
+  <meta property="og:description" content="Build practical positive and negative prompts from a reference image for Stable Diffusion workflows.">
+  <meta property="og:url" content="https://img2prompt.app/stable-diffusion-image-to-prompt/">
+  <link rel="stylesheet" href="../assets/content-pages.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can an image reveal its exact Stable Diffusion settings?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. Pixels alone do not reveal the original checkpoint, seed, sampler, steps, CFG value, LoRA stack, or exact prompt. Img2Prompt creates a useful visual reconstruction prompt from what is visible." }
+      },
+      {
+        "@type": "Question",
+        "name": "What belongs in a Stable Diffusion negative prompt?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Use a short list of unwanted visual outcomes that are relevant to the reference, such as text, watermarks, duplicate subjects, deformed hands, or an incorrect medium. Avoid copying an enormous generic list into every generation." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use the generated prompt in A1111 and ComfyUI?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Copy the positive and negative text into the corresponding prompt fields, then choose the checkpoint, dimensions, sampler, steps, CFG, and optional LoRA settings inside your own workflow." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">Img2<span>Prompt</span></a>
+      <a class="header-cta" href="/?format=stable-diffusion#generator">Generate a prompt</a>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <p class="eyebrow">Positive and negative prompt workflow</p>
+    <h1>Stable Diffusion Image to Prompt Generator</h1>
+    <p class="lede">Upload a reference image and turn its visible subject, composition, medium, lighting, and color into a practical Stable Diffusion positive prompt with focused exclusions.</p>
+    <div class="hero-actions">
+      <a class="primary-link" href="/?format=stable-diffusion#generator">Create a Stable Diffusion prompt</a>
+      <a class="secondary-link" href="#examples">See prompt examples →</a>
+    </div>
+    <ul class="proof-list" aria-label="Benefits">
+      <li>Free to use</li><li>No login</li><li>Positive + negative output</li><li>A1111 and ComfyUI ready</li>
+    </ul>
+
+    <section class="section-block">
+      <div class="section-heading">
+        <h2>Describe the image before tuning the workflow</h2>
+        <p>A useful reconstruction starts with visible evidence. Checkpoint choice and generation settings still matter, but they should not replace a clear description of the image itself.</p>
+      </div>
+      <div class="principle-grid">
+        <div class="principle-card"><strong>Build a readable positive prompt</strong><p>Lead with the subject and action, then add composition, environment, medium, lighting, palette, and only the most useful quality cues.</p></div>
+        <div class="principle-card"><strong>Keep negatives specific</strong><p>Exclude likely failures for this image instead of pasting an oversized universal negative prompt that may suppress useful details.</p></div>
+        <div class="principle-card"><strong>Tune outside the prompt</strong><p>Select the checkpoint, sampler, dimensions, steps, CFG, ControlNet, and optional LoRA inside A1111 or ComfyUI.</p></div>
+      </div>
+      <div class="notice">An image cannot disclose the checkpoint, seed, sampler, hidden conditioning, or LoRA used to create it. Img2Prompt reconstructs visible intent; your local workflow controls the final rendering behavior.</div>
+    </section>
+
+    <section class="section-block" id="examples">
+      <div class="section-heading">
+        <h2>Stable Diffusion prompt examples</h2>
+        <p>Each example separates the visual target from a short negative prompt, making it easy to place the two parts into separate nodes or fields.</p>
+      </div>
+      <div class="example-grid">
+        <article class="example-card">
+          <div class="example-context"><h3>Anime shrine guardian</h3><p>Reference cues: portrait framing, white fox mask, snowy torii gate, blue twilight, warm lanterns.</p></div>
+          <pre class="prompt-output">Positive prompt: anime key visual, young shrine guardian holding a white fox mask beside her face, vermilion torii gate, falling snow, deep red scarf, dark indigo winter robes, warm stone lanterns, clean expressive linework, refined cel shading, medium portrait, blue winter twilight, quiet determined mood
+
+Negative prompt: photorealistic, 3d render, extra fingers, malformed hands, duplicate mask, asymmetrical eyes, text, watermark, cropped head, flat lighting</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Bioluminescent fantasy scene</h3><p>Reference cues: floating temples, giant luminous whale, cloud ocean, teal and gold palette.</p></div>
+          <pre class="prompt-output">Positive prompt: epic fantasy matte painting, enormous bioluminescent sky whale swimming between floating temple islands, cascading waterfalls disappearing into a sea of clouds, tiny robed traveler on a stone balcony for scale, teal dusk, warm golden windows, atmospheric depth, sweeping wide composition, intricate architecture
+
+Negative prompt: modern city, aircraft, flat perspective, muddy colors, low detail, duplicate whale, text, logo, frame, oversaturated neon</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Editorial product still life</h3><p>Reference cues: amber bottle, pale stone pedestal, hard diagonal sun, controlled negative space.</p></div>
+          <pre class="prompt-output">Positive prompt: premium editorial product photograph, single amber glass skincare bottle centered on a pale travertine pedestal, warm beige plaster set, crisp diagonal sunlight, defined geometric shadow, tactile stone and glass surfaces, restrained composition, clean negative space, natural material detail
+
+Negative prompt: hands, people, extra bottles, warped label, illegible lettering, floating object, cluttered background, plastic texture, soft focus, watermark</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>How to use the result in your workflow</h2></div>
+      <ul class="tip-list">
+        <li><strong>Start clean.</strong> Paste the positive and negative prompt into their respective A1111 fields or ComfyUI text-encoding nodes before adding embeddings or style presets.</li>
+        <li><strong>Match the reference shape.</strong> Choose dimensions with a similar portrait, square, or landscape ratio. Composition often changes when the canvas shape changes.</li>
+        <li><strong>Add model-specific syntax last.</strong> Weighting conventions, trigger words, and LoRA activation phrases depend on the checkpoint and resources you actually use.</li>
+      </ul>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Stable Diffusion image-to-prompt FAQ</h2></div>
+      <div class="faq-list">
+        <article class="faq-item"><h3>Can this recover the original prompt and seed?</h3><p>No. It creates a practical visual equivalent. The original seed, checkpoint, sampler, steps, CFG, hidden metadata, and source wording cannot be inferred reliably from pixels alone.</p></article>
+        <article class="faq-item"><h3>Should I use a long negative prompt?</h3><p>Not automatically. Start with a focused list tied to likely failures in the reference, test the output, and only add exclusions that solve an observed problem.</p></article>
+        <article class="faq-item"><h3>Will the same prompt look identical in every checkpoint?</h3><p>No. Checkpoints and LoRAs interpret subjects, styles, and quality terms differently. Treat the generated prompt as a strong starting description, then tune it for your chosen model.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Explore other prompt formats</h2></div>
+      <div class="related-grid">
+        <a class="related-card" href="/midjourney-image-to-prompt/"><strong>Midjourney image to prompt</strong><p>Build concise visual prompts with aspect-ratio and exclusion guidance.</p></a>
+        <a class="related-card" href="/nano-banana-image-to-prompt/"><strong>Nano Banana image to prompt</strong><p>Write direct edit instructions while preserving identity and composition.</p></a>
+        <a class="related-card" href="/image-to-video-prompt/"><strong>Image to video prompt</strong><p>Plan camera movement, subject motion, and a coherent end state.</p></a>
+        <a class="related-card" href="/"><strong>All prompt formats</strong><p>Try Flux, DALL·E, JSON, and general structured prompts in the generator.</p></a>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <h2>Build a Stable Diffusion prompt from your image</h2>
+      <p>Upload a reference, select Stable Diffusion, and receive a structured positive prompt, negative prompt, style cues, lighting, camera, and color guidance.</p>
+      <a class="primary-link" href="/?format=stable-diffusion#generator">Generate a Stable Diffusion prompt</a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 Img2Prompt</span><nav class="footer-links" aria-label="Footer"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a></nav></div></footer>
+</body>
+</html>

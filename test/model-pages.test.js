@@ -28,6 +28,13 @@ const pages = [
     canonical: 'https://img2prompt.app/image-to-video-prompt/',
     format: 'video',
   },
+  {
+    directory: 'stable-diffusion-image-to-prompt',
+    title: 'Stable Diffusion Image to Prompt Generator | Img2Prompt',
+    h1: 'Stable Diffusion Image to Prompt Generator',
+    canonical: 'https://img2prompt.app/stable-diffusion-image-to-prompt/',
+    format: 'stable-diffusion',
+  },
 ];
 
 function readPage(directory) {
@@ -36,7 +43,7 @@ function readPage(directory) {
   return fs.readFileSync(pagePath, 'utf8');
 }
 
-test('publishes three distinct model landing pages with complete metadata', () => {
+test('publishes four distinct model landing pages with complete metadata', () => {
   for (const page of pages) {
     const html = readPage(page.directory);
     assert.match(html, new RegExp(`<title>${page.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</title>`));
@@ -90,6 +97,17 @@ test('image-to-video page separates camera, subject, and ending motion', () => {
   assert.match(html, /negative motion/i);
 });
 
+test('Stable Diffusion page separates positive and negative prompts and explains local workflow limits', () => {
+  const html = readPage('stable-diffusion-image-to-prompt');
+  assert.match(html, /positive prompt/i);
+  assert.match(html, /negative prompt/i);
+  assert.match(html, /checkpoint/i);
+  assert.match(html, /LoRA/i);
+  assert.match(html, /A1111/i);
+  assert.match(html, /ComfyUI/i);
+  assert.doesNotMatch(html, /guarantee|exact original prompt/i);
+});
+
 test('landing pages provide contextual links to the other model guides', () => {
   for (const page of pages) {
     const html = readPage(page.directory);
@@ -99,10 +117,11 @@ test('landing pages provide contextual links to the other model guides', () => {
   }
 });
 
-test('homepage links its model cards to the three in-depth guides', () => {
+test('homepage links its model cards to the four in-depth guides', () => {
   assert.match(homepage, /href="\/midjourney-image-to-prompt\/"/);
   assert.match(homepage, /href="\/nano-banana-image-to-prompt\/"/);
   assert.match(homepage, /href="\/image-to-video-prompt\/"/);
+  assert.match(homepage, /href="\/stable-diffusion-image-to-prompt\/"/);
   assert.doesNotMatch(homepage, /Includes[^<]*[–—-]{1,2}v(?:\s|,|<)/i);
 });
 
@@ -113,6 +132,7 @@ test('sitemap exposes all public landing and trust pages with absolute URLs', ()
     '/midjourney-image-to-prompt/',
     '/nano-banana-image-to-prompt/',
     '/image-to-video-prompt/',
+    '/stable-diffusion-image-to-prompt/',
     '/privacy/',
     '/terms/',
     '/contact/',
@@ -130,6 +150,7 @@ test('all published JSON-LD blocks contain valid JSON', () => {
     'midjourney-image-to-prompt/index.html',
     'nano-banana-image-to-prompt/index.html',
     'image-to-video-prompt/index.html',
+    'stable-diffusion-image-to-prompt/index.html',
   ];
   let blockCount = 0;
 
@@ -143,5 +164,5 @@ test('all published JSON-LD blocks contain valid JSON', () => {
     }
   }
 
-  assert.equal(blockCount, 6);
+  assert.equal(blockCount, 7);
 });
