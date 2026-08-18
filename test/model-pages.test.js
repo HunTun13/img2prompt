@@ -35,6 +35,13 @@ const pages = [
     canonical: 'https://img2prompt.app/stable-diffusion-image-to-prompt/',
     format: 'stable-diffusion',
   },
+  {
+    directory: 'character-consistency-prompt',
+    title: 'Character Consistency Prompt from an Image | Img2Prompt',
+    h1: 'Character Consistency Prompt from an Image',
+    canonical: 'https://img2prompt.app/character-consistency-prompt/',
+    format: 'nano-banana',
+  },
 ];
 
 function readPage(directory) {
@@ -43,7 +50,7 @@ function readPage(directory) {
   return fs.readFileSync(pagePath, 'utf8');
 }
 
-test('publishes four distinct model landing pages with complete metadata', () => {
+test('publishes five distinct model and workflow pages with complete metadata', () => {
   for (const page of pages) {
     const html = readPage(page.directory);
     assert.match(html, new RegExp(`<title>${page.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</title>`));
@@ -108,6 +115,16 @@ test('Stable Diffusion page separates positive and negative prompts and explains
   assert.doesNotMatch(html, /guarantee|exact original prompt/i);
 });
 
+test('Character consistency page separates fixed identity anchors from scene changes', () => {
+  const html = readPage('character-consistency-prompt');
+  assert.match(html, /existing Nano Banana prompt generator/i);
+  assert.match(html, /identity anchor/i);
+  assert.match(html, /what stays fixed/i);
+  assert.match(html, /what changes/i);
+  assert.match(html, /reference image/i);
+  assert.match(html, /cannot guarantee/i);
+});
+
 test('landing pages provide contextual links to the other model guides', () => {
   for (const page of pages) {
     const html = readPage(page.directory);
@@ -122,7 +139,23 @@ test('homepage links its model cards to the four in-depth guides', () => {
   assert.match(homepage, /href="\/nano-banana-image-to-prompt\/"/);
   assert.match(homepage, /href="\/image-to-video-prompt\/"/);
   assert.match(homepage, /href="\/stable-diffusion-image-to-prompt\/"/);
+  assert.match(homepage, /href="\/character-consistency-prompt\/"/);
   assert.doesNotMatch(homepage, /Includes[^<]*[–—-]{1,2}v(?:\s|,|<)/i);
+});
+
+test('homepage compares model-specific prompts for the same reference image', () => {
+  const comparison = homepage.slice(
+    homepage.indexOf('id="model-comparison"'),
+    homepage.indexOf('<!-- HOW TO USE -->'),
+  );
+
+  assert.match(comparison, /Same image, different model/i);
+  assert.equal((comparison.match(/class="model-prompt-card"/g) || []).length, 3);
+  assert.match(comparison, /href="\/\?format=midjourney#generator"/);
+  assert.match(comparison, /href="\/\?format=flux#generator"/);
+  assert.match(comparison, /href="\/\?format=stable-diffusion#generator"/);
+  assert.match(comparison, /--ar 4:3 --raw/);
+  assert.match(comparison, /Negative prompt:/i);
 });
 
 test('sitemap exposes all public landing and trust pages with absolute URLs', () => {
@@ -133,6 +166,7 @@ test('sitemap exposes all public landing and trust pages with absolute URLs', ()
     '/nano-banana-image-to-prompt/',
     '/image-to-video-prompt/',
     '/stable-diffusion-image-to-prompt/',
+    '/character-consistency-prompt/',
     '/privacy/',
     '/terms/',
     '/contact/',
@@ -151,6 +185,7 @@ test('all published JSON-LD blocks contain valid JSON', () => {
     'nano-banana-image-to-prompt/index.html',
     'image-to-video-prompt/index.html',
     'stable-diffusion-image-to-prompt/index.html',
+    'character-consistency-prompt/index.html',
   ];
   let blockCount = 0;
 
@@ -164,5 +199,5 @@ test('all published JSON-LD blocks contain valid JSON', () => {
     }
   }
 
-  assert.equal(blockCount, 7);
+  assert.equal(blockCount, 8);
 });

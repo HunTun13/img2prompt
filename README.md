@@ -15,8 +15,11 @@ Live site: [img2prompt.app](https://img2prompt.app/)
 ## Prompt guides
 
 - [Midjourney Image to Prompt Generator](https://img2prompt.app/midjourney-image-to-prompt/)
+- [Stable Diffusion Image to Prompt Generator](https://img2prompt.app/stable-diffusion-image-to-prompt/)
 - [Nano Banana Image to Prompt Generator](https://img2prompt.app/nano-banana-image-to-prompt/)
 - [Image to Video Prompt Generator](https://img2prompt.app/image-to-video-prompt/)
+- [Character Consistency Prompt from an Image](https://img2prompt.app/character-consistency-prompt/)
+- [Same Image, Different Model prompt comparison](https://img2prompt.app/#model-comparison)
 
 ## Project notes
 

@@ -493,6 +493,24 @@ header {
 .case-disclosure { margin-top: 14px; color: var(--text-4); font-size: 10px; line-height: 1.5; }
 .copy-sample { margin-top: 16px; padding: 0; border: 0; background: none; color: var(--primary); font-size: 12px; font-weight: 700; }
 .copy-sample:hover { text-decoration: underline; }
+.model-comparison { margin-top: 64px; padding-top: 44px; border-top: 1px solid var(--border-2); }
+.comparison-heading { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); gap: 36px; align-items: end; margin-bottom: 24px; }
+.comparison-heading .section-sub { max-width: 680px; }
+.comparison-workbench { display: grid; grid-template-columns: minmax(220px, .72fr) minmax(0, 1.6fr); gap: 20px; align-items: start; }
+.comparison-reference { margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.comparison-reference img { width: 100%; aspect-ratio: 4 / 3; display: block; object-fit: cover; }
+.comparison-reference figcaption { padding: 14px 16px; color: var(--text-4); font-size: 12px; line-height: 1.55; }
+.model-prompt-list { display: grid; gap: 10px; }
+.model-prompt-card { padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.model-prompt-head { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-bottom: 10px; }
+.model-prompt-head h3 { font-size: 15px; }
+.model-reason { color: var(--text-4); font-size: 11px; text-align: right; }
+.model-prompt-card .example-prompt { margin: 0; }
+.model-prompt-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 13px; }
+.model-prompt-actions .copy-sample { margin-top: 0; }
+.model-prompt-actions a { color: var(--text-3); font-size: 12px; font-weight: 650; }
+.comparison-workflow-link { margin: 20px 0 0; color: var(--text-3); font-size: 14px; }
+.comparison-workflow-link a { font-weight: 700; }
 
 /* ===== HOW TO USE ===== */
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 48px; border-top: 1px solid var(--border-2); }
@@ -620,6 +638,9 @@ footer {
   .case-study:nth-child(even) .case-pair, .case-study:nth-child(even) .case-body { order: initial; }
   .case-study:nth-child(even) .case-body, .case-body { border: 0; border-top: 1px solid var(--border); }
   .case-pair { min-height: 300px; }
+  .comparison-heading, .comparison-workbench { grid-template-columns: 1fr; }
+  .comparison-heading { gap: 10px; }
+  .comparison-reference { max-width: 520px; }
   .options-grid { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; border-top: 0; }
   .step, .step + .step { border-right: 0; border-top: 1px solid var(--border); padding: 22px 0; }
@@ -645,6 +666,8 @@ footer {
   #drop-zone { padding: 30px 14px; }
   .case-pair { min-height: 220px; }
   .case-body { padding: 20px; }
+  .model-prompt-head { display: block; }
+  .model-reason { margin-top: 3px; text-align: left; }
   .hero-sub { font-size: 15px; }
 }
 </style>
@@ -851,6 +874,49 @@ footer {
           <p class="case-disclosure">Both images are original AI-generated case-study assets created with OpenAI image generation.</p>
         </div>
       </article>
+    </div>
+
+    <div class="model-comparison" id="model-comparison">
+      <div class="comparison-heading">
+        <div>
+          <p class="section-label">Model Prompt Lab</p>
+          <h2 class="section-title">Same image, different model</h2>
+        </div>
+        <p class="section-sub">A useful image-to-prompt tool should not return the same paragraph for every model. Here is how one reference changes when the target workflow changes.</p>
+      </div>
+      <div class="comparison-workbench">
+        <figure class="comparison-reference">
+          <img src="/assets/examples/cyberpunk-reference.webp" width="1200" height="900" loading="lazy" alt="Reference image of a bicycle courier in a futuristic city used for three model prompt formats">
+          <figcaption>One reference image. The subject and visual evidence stay fixed; only the prompt structure changes.</figcaption>
+        </figure>
+        <div class="model-prompt-list">
+          <article class="model-prompt-card">
+            <div class="model-prompt-head"><h3>Midjourney</h3><span class="model-reason">Concise visual hierarchy + parameters</span></div>
+            <p class="example-prompt">lone bicycle courier in a translucent raincoat at a futuristic city crosswalk, cyan and amber neon reflected on wet asphalt, street steam, elevated tram, cinematic realistic concept art, street-level wide shot, atmospheric depth --ar 4:3 --raw --no text, watermark</p>
+            <div class="model-prompt-actions">
+              <button class="copy-sample" data-sample="lone bicycle courier in a translucent raincoat at a futuristic city crosswalk, cyan and amber neon reflected on wet asphalt, street steam, elevated tram, cinematic realistic concept art, street-level wide shot, atmospheric depth --ar 4:3 --raw --no text, watermark">Copy Midjourney prompt</button>
+              <a href="/?format=midjourney#generator">Try with your image →</a>
+            </div>
+          </article>
+          <article class="model-prompt-card">
+            <div class="model-prompt-head"><h3>Flux</h3><span class="model-reason">Natural language + explicit spatial detail</span></div>
+            <p class="example-prompt">At street level in a rain-soaked futuristic megacity, a lone bicycle courier wearing a translucent raincoat waits at a crosswalk. Cyan signs and warm amber windows reflect across the dark asphalt. Steam drifts between the courier and a distant elevated tram, creating a deep cinematic frame with realistic materials and restrained atmospheric haze.</p>
+            <div class="model-prompt-actions">
+              <button class="copy-sample" data-sample="At street level in a rain-soaked futuristic megacity, a lone bicycle courier wearing a translucent raincoat waits at a crosswalk. Cyan signs and warm amber windows reflect across the dark asphalt. Steam drifts between the courier and a distant elevated tram, creating a deep cinematic frame with realistic materials and restrained atmospheric haze.">Copy Flux prompt</button>
+              <a href="/?format=flux#generator">Try with your image →</a>
+            </div>
+          </article>
+          <article class="model-prompt-card">
+            <div class="model-prompt-head"><h3>Stable Diffusion</h3><span class="model-reason">Positive tags + focused negatives</span></div>
+            <p class="example-prompt"><strong>Positive prompt:</strong> lone bicycle courier, translucent raincoat, futuristic city crosswalk at night, wet asphalt reflections, cyan neon, amber windows, drifting steam, elevated tram, cinematic concept art, realistic materials, street-level wide shot, atmospheric depth<br><strong>Negative prompt:</strong> text, watermark, extra wheels, duplicate bicycle, malformed hands, oversaturated neon, flat lighting</p>
+            <div class="model-prompt-actions">
+              <button class="copy-sample" data-sample="Positive prompt: lone bicycle courier, translucent raincoat, futuristic city crosswalk at night, wet asphalt reflections, cyan neon, amber windows, drifting steam, elevated tram, cinematic concept art, realistic materials, street-level wide shot, atmospheric depth\n\nNegative prompt: text, watermark, extra wheels, duplicate bicycle, malformed hands, oversaturated neon, flat lighting">Copy Stable Diffusion prompt</button>
+              <a href="/?format=stable-diffusion#generator">Try with your image →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+      <p class="comparison-workflow-link">Building a repeatable character across scenes? <a href="/character-consistency-prompt/">See the character consistency prompt workflow →</a></p>
     </div>
   </div>
 </section>
@@ -1109,6 +1175,7 @@ footer {
       <a href="/stable-diffusion-image-to-prompt/">Stable Diffusion</a>
       <a href="/nano-banana-image-to-prompt/">Nano Banana</a>
       <a href="/image-to-video-prompt/">Image to Video</a>
+      <a href="/character-consistency-prompt/">Character Consistency</a>
       <a href="#faq">FAQ</a>
       <a href="/privacy/">Privacy</a>
       <a href="/terms/">Terms</a>

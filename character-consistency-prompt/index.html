@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4R1VYKF6P0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4R1VYKF6P0');
+  </script>
+  <title>Character Consistency Prompt from an Image | Img2Prompt</title>
+  <meta name="description" content="Turn a character reference image into a consistency-ready prompt with fixed identity anchors, controlled scene changes, and practical model guidance.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://img2prompt.app/character-consistency-prompt/">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Character Consistency Prompt from an Image | Img2Prompt">
+  <meta property="og:description" content="Separate what must stay fixed from what can change when building prompts for a recurring AI character.">
+  <meta property="og:url" content="https://img2prompt.app/character-consistency-prompt/">
+  <link rel="stylesheet" href="../assets/content-pages.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can a prompt guarantee the exact same character in every image?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. A prompt can describe stable identity anchors, but exact consistency also depends on the reference image, model, seed, character-reference features, LoRA, or other workflow controls." }
+      },
+      {
+        "@type": "Question",
+        "name": "What should stay fixed in a character consistency prompt?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Keep the visible identity anchors fixed: face shape, hair silhouette, eye color, distinctive marks, body proportions, and defining accessories. State scene, pose, expression, and outfit changes separately." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which image workflow should I use for character consistency?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Use the generated description as a starting point, then pair it with the workflow's reference-image or identity-control feature. Nano Banana-style editing, Stable Diffusion reference tools, and Midjourney character-reference features each have different controls." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">Img2<span>Prompt</span></a>
+      <a class="header-cta" href="/?format=nano-banana#generator">Generate a prompt</a>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <p class="eyebrow">Recurring character workflow</p>
+    <h1>Character Consistency Prompt from an Image</h1>
+    <p class="lede">Turn a character reference into a clear identity anchor, then describe the pose, outfit, expression, and setting you want to change without rewriting the character from scratch.</p>
+    <div class="hero-actions">
+      <a class="primary-link" href="/?format=nano-banana#generator">Create a character prompt</a>
+      <a class="secondary-link" href="#examples">See consistency examples →</a>
+    </div>
+    <ul class="proof-list" aria-label="Benefits">
+      <li>Free to use</li><li>No login</li><li>Fixed identity anchors</li><li>Controlled scene changes</li>
+    </ul>
+    <div class="notice"><strong>How this page works:</strong> The examples below are workflow templates. The button opens Img2Prompt's existing Nano Banana prompt generator and analyzes your image; it does not claim to guarantee an identical face in every output.</div>
+
+    <section class="section-block">
+      <div class="section-heading">
+        <h2>Describe the character in two layers</h2>
+        <p>Consistency improves when the prompt makes a hard distinction between the details that define the character and the details that define this particular shot.</p>
+      </div>
+      <div class="principle-grid">
+        <div class="principle-card"><strong>Identity anchor</strong><p>Record face shape, hair silhouette, eye color, skin tone, distinctive marks, body proportions, and signature accessories from the reference image.</p></div>
+        <div class="principle-card"><strong>What stays fixed</strong><p>Repeat the identity anchor when you change the scene. Keep the wording concrete instead of relying on a vague name or style label.</p></div>
+        <div class="principle-card"><strong>What changes</strong><p>Put pose, expression, clothing, camera angle, action, lighting, and environment in a separate edit instruction.</p></div>
+      </div>
+      <div class="notice">A prompt cannot guarantee an identical face in every output. Use a reference image and the identity-control features of your chosen model or workflow when exact continuity matters.</div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading">
+        <h2>Reference evidence for a recurring character</h2>
+        <p>The useful part of an image-to-prompt result is not a fictional character name. It is a precise record of visible anchors that another image workflow can reuse.</p>
+      </div>
+      <div class="evidence-pair">
+        <figure>
+          <img src="/assets/examples/anime-reference.webp" width="1200" height="900" loading="lazy" alt="Anime shrine guardian reference image with a fox mask and red scarf">
+          <figcaption>Reference: note the fox mask, red scarf, dark indigo robe, hair shape, and face-framing composition.</figcaption>
+        </figure>
+        <figure>
+          <img src="/assets/examples/anime-recreated.webp" width="1200" height="900" loading="lazy" alt="New AI interpretation of the same anime shrine guardian character">
+          <figcaption>New interpretation: the subject can vary, so identity controls still matter beyond the written prompt.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section-block" id="examples">
+      <div class="section-heading">
+        <h2>Character consistency prompt examples</h2>
+        <p>Copy the structure, then replace the visible details with the anchors from your own reference image.</p>
+      </div>
+      <div class="example-grid">
+        <article class="example-card">
+          <div class="example-context"><h3>Portrait anchor</h3><p>Keep the identity fixed while changing only the portrait treatment.</p></div>
+          <pre class="prompt-output">Identity anchor: young shrine guardian with a heart-shaped face, straight black bob with a loose strand over the right cheek, warm brown eyes, small beauty mark below the left eye, red scarf, white fox mask with a blue cord.
+
+What stays fixed: face shape, bob silhouette, eye color, beauty mark, red scarf, fox mask design.
+
+What changes: three-quarter portrait, calm expression, soft winter window light, muted blue background, shoulders-up framing.</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Action variation</h3><p>Preserve the same character while changing pose and camera energy.</p></div>
+          <pre class="prompt-output">Identity anchor: same shrine guardian, black bob, warm brown eyes, beauty mark below the left eye, red scarf, white fox mask tied at the hip.
+
+What stays fixed: facial features, hair silhouette, body proportions, scarf color, mask shape.
+
+What changes: running through falling snow beside a vermilion torii gate, one hand lifting the scarf, low camera angle, determined expression, blue twilight, dynamic motion in the robe hem.</pre>
+        </article>
+        <article class="example-card">
+          <div class="example-context"><h3>Scene and outfit variation</h3><p>Change the world around the character without losing the visual anchor.</p></div>
+          <pre class="prompt-output">Identity anchor: recurring young shrine guardian with a heart-shaped face, straight black bob, warm brown eyes, left-cheek beauty mark, and white fox mask.
+
+What stays fixed: face, hair, eyes, beauty mark, petite proportions, recognizable fox mask.
+
+What changes: charcoal travel coat over the red scarf, lantern-lit mountain train platform at night, light rain, 50mm medium shot, quiet watchful expression, amber and teal palette.</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>How to use the result</h2></div>
+      <ul class="tip-list">
+        <li><strong>Start from a clean reference.</strong> Use a clear face and enough of the body or signature accessories to make the identity anchor observable.</li>
+        <li><strong>Write fixed details once.</strong> Keep the identity block stable and put every new pose, outfit, or setting in the change block.</li>
+        <li><strong>Add workflow controls.</strong> Use the reference-image, character-reference, IP-Adapter, ControlNet, or LoRA feature available in your chosen model when the face must stay close.</li>
+      </ul>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Character consistency FAQ</h2></div>
+      <div class="faq-list">
+        <article class="faq-item"><h3>Can a prompt guarantee the exact same character?</h3><p>No. The prompt describes visible identity evidence, but exact continuity also depends on the reference image, model, seed, character-reference features, LoRA, or other workflow controls.</p></article>
+        <article class="faq-item"><h3>What should stay fixed?</h3><p>Keep face shape, hair silhouette, eye color, distinctive marks, proportions, and signature accessories fixed. Put pose, expression, outfit, camera, and setting under what changes.</p></article>
+        <article class="faq-item"><h3>Should I use this with Nano Banana or Stable Diffusion?</h3><p>Both can use the structure as a starting point. Nano Banana-style edits focus on explicit changes and identity preservation; Stable Diffusion workflows may add reference adapters, ControlNet, or a character LoRA.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Explore other prompt workflows</h2></div>
+      <div class="related-grid">
+        <a class="related-card" href="/midjourney-image-to-prompt/"><strong>Midjourney image to prompt</strong><p>Build concise visual prompts with aspect-ratio and exclusion guidance.</p></a>
+        <a class="related-card" href="/nano-banana-image-to-prompt/"><strong>Nano Banana image to prompt</strong><p>Write direct edits while preserving identity and defining visual features.</p></a>
+        <a class="related-card" href="/image-to-video-prompt/"><strong>Image to video prompt</strong><p>Add coherent camera, subject, and environmental motion to a still frame.</p></a>
+        <a class="related-card" href="/stable-diffusion-image-to-prompt/"><strong>Stable Diffusion image to prompt</strong><p>Separate positive prompts, focused negatives, and local workflow controls.</p></a>
+        <a class="related-card" href="/"><strong>All prompt formats</strong><p>Try Flux, DALL·E, JSON, and general structured prompts in the generator.</p></a>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <h2>Build a character prompt from your reference</h2>
+      <p>Upload a character image, select Nano Banana, and use the structured result as a starting point for a controlled edit or recurring-character workflow.</p>
+      <a class="primary-link" href="/?format=nano-banana#generator">Generate a character prompt</a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 Img2Prompt</span><nav class="footer-links" aria-label="Footer"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a></nav></div></footer>
+</body>
+</html>

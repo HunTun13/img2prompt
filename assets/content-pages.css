@@ -239,6 +239,33 @@ li + li { margin-top: 8px; }
 
 .example-grid { display: grid; gap: 20px; }
 
+.evidence-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.evidence-pair figure {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.evidence-pair img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+  object-fit: cover;
+}
+
+.evidence-pair figcaption {
+  padding: 14px 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .example-card {
   overflow: hidden;
   border: 1px solid var(--line);
@@ -340,6 +367,7 @@ li + li { margin-top: 8px; }
   .final-cta { margin-top: 52px; }
   .example-context,
   .prompt-output { padding-left: 20px; padding-right: 20px; }
+  .evidence-pair { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 641px) and (max-width: 820px) {
