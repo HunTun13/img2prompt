@@ -339,7 +339,7 @@ test('rejects unknown model formats before calling an AI provider', async () => 
   assert.equal(fetchCalls, 0);
 });
 
-async function captureProviderPrompt(format) {
+async function captureProviderPrompt(format, useCase) {
   let providerPrompt = '';
   const result = {
     mainPrompt: 'A faithful description of the visible scene.',
@@ -360,6 +360,7 @@ async function captureProviderPrompt(format) {
   }, async () => {
     const request = createRequest();
     request.body.format = format;
+    if (useCase) request.body.useCase = useCase;
     const response = createResponse();
     await handler(request, response);
     assert.equal(response.statusCode, 200);
@@ -367,6 +368,34 @@ async function captureProviderPrompt(format) {
 
   return providerPrompt;
 }
+
+test('adds distinct scene guidance only for supported use cases', async () => {
+  const product = await captureProviderPrompt('general', 'product');
+  const anime = await captureProviderPrompt('general', 'anime');
+  const interior = await captureProviderPrompt('general', 'interior');
+  assert.match(product, /product materials|product surface/i);
+  assert.match(product, /do not invent.*(?:brand|packaging)/i);
+  assert.match(anime, /line work|character design/i);
+  assert.match(interior, /room layout|architecture/i);
+  assert.notEqual(product, anime);
+  assert.notEqual(anime, interior);
+});
+
+test('rejects unsupported scene identifiers before calling the AI provider', async () => {
+  let fetchCalls = 0;
+  await withGatewayEnvironment(async () => {
+    fetchCalls += 1;
+    throw new Error('provider fetch should not be called');
+  }, async () => {
+    const request = createRequest();
+    request.body.useCase = 'anything';
+    const response = createResponse();
+    await handler(request, response);
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.code, 'INVALID_USE_CASE');
+  });
+  assert.equal(fetchCalls, 0);
+});
 
 test('anchors every generated prompt to visible evidence instead of invented details', async () => {
   const prompt = await captureProviderPrompt('general');

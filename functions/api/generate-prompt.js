@@ -44,12 +44,20 @@ const DETAIL_GUIDE = {
   detailed: "Maximum detail. Cover every visual element: subject, material, texture, environment, lighting, atmosphere, camera, style, mood.",
 };
 
-function buildPrompt(format, detail) {
+const USE_CASE_GUIDE = {
+  product: "Treat the uploaded product as the fixed subject. Describe visible product materials, product surface, shape, packaging, light, and camera angle before suggesting one suitable advertising scene in the modelPrompt. Keep the product itself faithful. Do not invent brand names, packaging text, or product claims. This is an image-generation prompt, not advertising copy.",
+  anime: "Treat the image as a character-design reference. Describe visible character features, costume, silhouette, line work, palette, and background. For the modelPrompt, express a coherent anime illustration direction without guessing a franchise or artist identity.",
+  interior: "Treat the image as an interior-design reference. Preserve the visible room layout and fixed architecture, then describe materials, furniture relationships, daylight, camera position, and a coherent style direction. Do not invent measurements or structural changes.",
+};
+const SUPPORTED_USE_CASES = new Set(["general", "product", "anime", "interior"]);
+
+function buildPrompt(format, detail, useCase = "general") {
   return [
     BASE_SYSTEM, "",
     `Target model format: ${format.toUpperCase()}`,
     `Model instruction: ${MODEL_GUIDE[format] || MODEL_GUIDE.general}`,
     `Detail level: ${detail} — ${DETAIL_GUIDE[detail] || DETAIL_GUIDE.detailed}`,
+    ...(useCase === "general" ? [] : [`Use-case instruction: ${USE_CASE_GUIDE[useCase]}`]),
     "", "Return this exact JSON structure (fill every field):", JSON_SCHEMA,
   ].join("\n");
 }
@@ -131,9 +139,11 @@ export async function onRequestOptions() {
 export async function onRequestPost(context) {
   const { request, env } = context;
   try {
-    const { imageData, format, detail, cfToken } = await request.json();
+    const { imageData, format, detail, cfToken, useCase = "general" } = await request.json();
     if (!imageData || !format || !detail || !cfToken)
       return jsonRes({ error: "Missing required fields" }, 400);
+    if (!SUPPORTED_USE_CASES.has(useCase))
+      return jsonRes({ error: "Please choose a supported use case.", code: "INVALID_USE_CASE" }, 400);
     if (imageData.length > 12 * 1024 * 1024)
       return jsonRes({ error: "Image too large (max 10 MB)" }, 413);
 
@@ -142,7 +152,7 @@ export async function onRequestPost(context) {
       return jsonRes({ error: "Human verification failed. Please refresh and try again." }, 403);
 
     const [imagePart] = await Promise.all([toInlineData(imageData)]);
-    const prompt = buildPrompt(format, detail);
+    const prompt = buildPrompt(format, detail, useCase);
     const raw    = await callGemini(imagePart, prompt, env);
     const result = parseResult(raw, format);
     return jsonRes(result);
