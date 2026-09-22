@@ -8,11 +8,15 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const gaMeasurementId = 'G-4R1VYKF6P0';
 const publicHtmlPages = [
   'index.html',
+  'image-to-prompt-generator/index.html',
   'midjourney-image-to-prompt/index.html',
   'nano-banana-image-to-prompt/index.html',
   'image-to-video-prompt/index.html',
   'stable-diffusion-image-to-prompt/index.html',
   'character-consistency-prompt/index.html',
+  'product-image-to-prompt/index.html',
+  'anime-image-to-prompt/index.html',
+  'interior-design-prompt/index.html',
   'privacy/index.html',
   'terms/index.html',
   'contact/index.html',
@@ -26,6 +30,7 @@ test('publishes a root sitemap with canonical production URLs', () => {
   assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
   assert.match(sitemap, /<loc>https:\/\/img2prompt\.app\/<\/loc>/);
   assert.doesNotMatch(sitemap, /<loc>\//, 'sitemap URLs should be absolute');
+  assert.equal((sitemap.match(/<url>/g) || []).length, 13, 'sitemap should list ten landing pages and three trust pages');
 });
 
 test('robots.txt allows search crawling and points crawlers to the sitemap', () => {
@@ -61,7 +66,7 @@ test('loads Google Analytics 4 on every public page', () => {
   for (const page of publicHtmlPages) {
     const pageHtml = fs.readFileSync(path.join(root, page), 'utf8');
     assert.match(pageHtml, new RegExp(`https://www\\.googletagmanager\\.com/gtag/js\\?id=${gaMeasurementId}`), `${page} should load the GA4 tag`);
-    assert.match(pageHtml, new RegExp(`gtag\\('config', '${gaMeasurementId}'\\)`), `${page} should configure the GA4 measurement ID`);
+    assert.match(pageHtml, new RegExp(`gtag\\(\\s*'config'\\s*,\\s*'${gaMeasurementId}'\\s*\\)`), `${page} should configure the GA4 measurement ID`);
   }
 });
 

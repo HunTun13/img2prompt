@@ -11,16 +11,23 @@
     gtag('js', new Date());
     gtag('config', 'G-4R1VYKF6P0');
   </script>
-  <title>Midjourney Image to Prompt Generator | Img2Prompt</title>
-  <meta name="description" content="Turn any reference image into a Midjourney-ready prompt with useful composition, lighting, aspect-ratio, raw-style, and exclusion guidance.">
+  <title>Midjourney Image to Prompt - Convert Image to MJ Prompt | Img2Prompt</title>
+  <meta name="description" content="Midjourney image to prompt turns a reference into a concise visual description, with aspect-ratio and parameter guidance you can edit before use.">
   <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://img2prompt.app/midjourney-image-to-prompt/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Midjourney Image to Prompt Generator | Img2Prompt">
+  <meta property="og:title" content="Midjourney Image to Prompt - Convert Image to MJ Prompt | Img2Prompt">
   <meta property="og:description" content="Create reusable Midjourney prompts from reference images, with current parameter guidance.">
   <meta property="og:url" content="https://img2prompt.app/midjourney-image-to-prompt/">
   <link rel="stylesheet" href="../assets/content-pages.css">
+  <link rel="stylesheet" href="../assets/embedded-generator.css">
+  <script src="../assets/embedded-generator.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+  <style>.workflow-table{display:block;overflow-x:auto;width:100%;border-collapse:collapse}.workflow-table th,.workflow-table td{padding:12px 14px;border-bottom:1px solid #ddd9d2;text-align:left;vertical-align:top;min-width:140px}</style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Img2Prompt Midjourney Image to Prompt","url":"https://img2prompt.app/midjourney-image-to-prompt/","applicationCategory":"DesignApplication","operatingSystem":"Web","description":"Generate a Midjourney-ready prompt from an uploaded reference image.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -55,8 +62,8 @@
 
   <main class="page-shell">
     <p class="eyebrow">Model-specific image analysis</p>
-    <h1>Midjourney Image to Prompt Generator</h1>
-    <p class="lede">Upload a reference image and get a concise Midjourney-ready prompt built around its visible subject, composition, lighting, mood, and aspect ratio.</p>
+    <h1>Midjourney Image to Prompt</h1>
+    <p class="lede">This page helps turn a reference image into a concise Midjourney prompt built around its subject, composition, light, and mood. Unlike a general image description, it explains where to use Midjourney parameters and when to leave them out.</p>
     <div class="hero-actions">
       <a class="primary-link" href="/?format=midjourney#generator">Turn an image into a Midjourney prompt</a>
       <a class="secondary-link" href="#examples">See prompt examples →</a>
@@ -64,6 +71,11 @@
     <ul class="proof-list" aria-label="Benefits">
       <li>Free to use</li><li>No login</li><li>Current parameter guidance</li><li>Structured output</li>
     </ul>
+
+    <section class="section-block" aria-label="Try the Midjourney image to prompt tool">
+      <div class="section-heading"><h2>Try it with your reference</h2><p>Midjourney is selected by default. Upload an image to generate a visual prompt, then review the aspect ratio and optional parameters before using it.</p></div>
+      <div data-prompt-tool data-use-case="general" data-default-format="midjourney"></div>
+    </section>
 
     <section class="section-block">
       <div class="section-heading">
@@ -76,6 +88,19 @@
         <div class="principle-card"><strong>Use parameters with intent</strong><p>Add <code>--raw</code> when literal prompt control helps, and a short <code>--no</code> list only for important exclusions.</p></div>
       </div>
       <div class="notice">Img2Prompt does not force a model version. That avoids pinning your prompt to an obsolete default and leaves you free to choose a version when a project requires one.</div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Midjourney syntax at a glance</h2><p>Write the visual subject in ordinary language first. Add a parameter only when it solves a specific composition or styling problem.</p></div>
+      <table class="workflow-table">
+        <thead><tr><th scope="col">Syntax</th><th scope="col">Use it for</th><th scope="col">Example decision</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>--ar</code></th><td>Canvas shape</td><td>Choose <code>--ar 16:9</code> for a wide landscape; use <code>--ar 4:5</code> for a portrait crop.</td></tr>
+          <tr><th scope="row"><code>--raw</code></th><td>Closer adherence to the written description</td><td>Try it when automatic styling overwhelms the reference's visible details.</td></tr>
+          <tr><th scope="row"><code>--no</code></th><td>Short, concrete exclusions</td><td>Exclude extra people or a watermark only when those are likely to interfere.</td></tr>
+        </tbody>
+      </table>
+      <p class="notice">Put parameters at the end of the prompt, and check your current Midjourney interface for supported options before pasting. A reference image cannot reveal the original version, seed, or hidden settings.</p>
     </section>
 
     <section class="section-block" id="examples">

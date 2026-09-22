@@ -11,16 +11,23 @@
     gtag('js', new Date());
     gtag('config', 'G-4R1VYKF6P0');
   </script>
-  <title>Image to Video Prompt Generator | Img2Prompt</title>
-  <meta name="description" content="Turn a still image into a structured video prompt with camera movement, subject motion, environmental action, timing, and a coherent end state.">
+  <title>Image to Video Prompt Generator - AI Video Prompt Tool | Img2Prompt</title>
+  <meta name="description" content="Image to video prompt generator turns a still frame into a motion brief with camera moves, subject action, timing, and constraints for AI video tools.">
   <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://img2prompt.app/image-to-video-prompt/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Image to Video Prompt Generator | Img2Prompt">
+  <meta property="og:title" content="Image to Video Prompt Generator - AI Video Prompt Tool | Img2Prompt">
   <meta property="og:description" content="Plan coherent motion from a reference image for modern AI video generators.">
   <meta property="og:url" content="https://img2prompt.app/image-to-video-prompt/">
   <link rel="stylesheet" href="../assets/content-pages.css">
+  <link rel="stylesheet" href="../assets/embedded-generator.css">
+  <script src="../assets/embedded-generator.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+  <style>.workflow-table{display:block;overflow-x:auto;width:100%;border-collapse:collapse}.workflow-table th,.workflow-table td{padding:12px 14px;border-bottom:1px solid #ddd9d2;text-align:left;vertical-align:top;min-width:140px}</style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Img2Prompt Image to Video Prompt Generator","url":"https://img2prompt.app/image-to-video-prompt/","applicationCategory":"DesignApplication","operatingSystem":"Web","description":"Turn a still image into a structured motion prompt for an image-to-video workflow.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -51,9 +58,14 @@
   <main class="page-shell">
     <p class="eyebrow">Motion planning from a still frame</p>
     <h1>Image to Video Prompt Generator</h1>
-    <p class="lede">Upload a still image and turn it into a video-ready motion brief covering camera movement, subject motion, environmental dynamics, timing, and the end state.</p>
+    <p class="lede">This page turns a still image into a motion brief for an image-to-video workflow. Unlike an image-generation prompt, it specifies a camera path, subject movement, duration, end frame, and unwanted motion artifacts.</p>
     <div class="hero-actions"><a class="primary-link" href="/?format=video#generator">Create an image-to-video prompt</a><a class="secondary-link" href="#examples">See motion examples →</a></div>
     <ul class="proof-list" aria-label="Benefits"><li>Free to use</li><li>No login</li><li>Motion-specific output</li><li>Negative motion guidance</li></ul>
+
+    <section class="section-block" aria-label="Try the image to video prompt tool">
+      <div class="section-heading"><h2>Plan motion from this frame</h2><p>Image-to-video is selected by default. Upload a still image to draft camera, subject, and environmental motion, then choose duration and frame rate in your video platform.</p></div>
+      <div data-prompt-tool data-use-case="general" data-default-format="video"></div>
+    </section>
 
     <section class="section-block">
       <div class="section-heading"><h2>Move the image without losing the image</h2><p>The reference is the starting frame. A reliable prompt introduces a small number of compatible changes and makes their direction, pace, and destination clear.</p></div>
@@ -90,6 +102,28 @@
         <li><strong>Motion plan:</strong> specify one camera movement, separate subject motion, and one or two environmental actions with pace and direction.</li>
         <li><strong>End state and constraints:</strong> describe the final composition and add a brief negative motion list for likely artifacts.</li>
       </ul>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Translate visual intent into shot language</h2><p>Keep camera movement separate from action inside the scene. Duration and frame rate are usually selected in the video tool's controls, so treat the values below as planning notes rather than universal prompt syntax.</p></div>
+      <table class="workflow-table">
+        <thead><tr><th scope="col">Shot choice</th><th scope="col">Plain-language instruction</th><th scope="col">When it helps</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Slow push-in</th><td>Move the camera gently toward the subject over 4–6 seconds.</td><td>Reveal texture or increase intimacy without changing the scene.</td></tr>
+          <tr><th scope="row">Sideways tracking</th><td>Slide left or right at an even speed while keeping the product centered.</td><td>Show shape and depth in a product shot.</td></tr>
+          <tr><th scope="row">Locked camera</th><td>Keep the camera still; let only fabric, fog, hair, or light move.</td><td>Protect a complex face or composition from unnecessary drift.</td></tr>
+        </tbody>
+      </table>
+      <h3>Adapt the brief to your platform's input mode</h3>
+      <table class="workflow-table">
+        <thead><tr><th scope="col">Input mode</th><th scope="col">Visual anchor</th><th scope="col">Prompt adjustment</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Start frame + text</th><td>Upload the reference image.</td><td>Focus the text on camera, subject, and environmental motion.</td></tr>
+          <tr><th scope="row">Start and end frames</th><td>Provide both images when the editor supports them.</td><td>Describe the transition and what must remain consistent between frames.</td></tr>
+          <tr><th scope="row">Text-only video</th><td>No image upload is available.</td><td>Describe the full starting composition before adding motion.</td></tr>
+        </tbody>
+      </table>
+      <div class="notice">Select duration and frame rate in the editor when separate controls are available. Platform options change, so confirm the current controls before rendering.</div>
     </section>
 
     <section class="section-block">

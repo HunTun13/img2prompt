@@ -9,39 +9,46 @@ const homepage = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const pages = [
   {
     directory: 'midjourney-image-to-prompt',
-    title: 'Midjourney Image to Prompt Generator | Img2Prompt',
-    h1: 'Midjourney Image to Prompt Generator',
+    title: 'Midjourney Image to Prompt - Convert Image to MJ Prompt | Img2Prompt',
+    h1: 'Midjourney Image to Prompt',
     canonical: 'https://img2prompt.app/midjourney-image-to-prompt/',
     format: 'midjourney',
   },
   {
     directory: 'nano-banana-image-to-prompt',
-    title: 'Nano Banana Image to Prompt Generator | Img2Prompt',
-    h1: 'Nano Banana Image to Prompt Generator',
+    title: 'Nano Banana Image to Prompt - Free AI Tool | Img2Prompt',
+    h1: 'Nano Banana Image to Prompt',
     canonical: 'https://img2prompt.app/nano-banana-image-to-prompt/',
     format: 'nano-banana',
   },
   {
     directory: 'image-to-video-prompt',
-    title: 'Image to Video Prompt Generator | Img2Prompt',
+    title: 'Image to Video Prompt Generator - AI Video Prompt Tool | Img2Prompt',
     h1: 'Image to Video Prompt Generator',
     canonical: 'https://img2prompt.app/image-to-video-prompt/',
     format: 'video',
   },
   {
     directory: 'stable-diffusion-image-to-prompt',
-    title: 'Stable Diffusion Image to Prompt Generator | Img2Prompt',
-    h1: 'Stable Diffusion Image to Prompt Generator',
+    title: 'Stable Diffusion Image to Prompt - SD Prompt Generator | Img2Prompt',
+    h1: 'Stable Diffusion Image to Prompt',
     canonical: 'https://img2prompt.app/stable-diffusion-image-to-prompt/',
     format: 'stable-diffusion',
   },
   {
     directory: 'character-consistency-prompt',
-    title: 'Character Consistency Prompt from an Image | Img2Prompt',
-    h1: 'Character Consistency Prompt from an Image',
+    title: 'Character Consistency Prompt Generator - AI Character Tool | Img2Prompt',
+    h1: 'Character Consistency Prompt Generator',
     canonical: 'https://img2prompt.app/character-consistency-prompt/',
     format: 'nano-banana',
   },
+];
+
+const newPages = [
+  { directory: 'image-to-prompt-generator', title: 'Image to Prompt Generator - Free Online AI Tool | Img2Prompt', h1: 'Image to Prompt Generator', useCase: 'general', format: 'general', related: 'midjourney-image-to-prompt' },
+  { directory: 'product-image-to-prompt', title: 'Product Image to Prompt - E-commerce Scene Briefs | Img2Prompt', h1: 'Product Image to Prompt', useCase: 'product', format: 'general', related: 'stable-diffusion-image-to-prompt' },
+  { directory: 'anime-image-to-prompt', title: 'Anime Image to Prompt - Character and Style Guide | Img2Prompt', h1: 'Anime Image to Prompt', useCase: 'anime', format: 'general', related: 'character-consistency-prompt' },
+  { directory: 'interior-design-prompt', title: 'Interior Design Prompts - Room Styles from References | Img2Prompt', h1: 'Interior Design Prompts', useCase: 'interior', format: 'general', related: 'nano-banana-image-to-prompt' },
 ];
 
 function readPage(directory) {
@@ -56,8 +63,27 @@ test('publishes five distinct model and workflow pages with complete metadata', 
     assert.match(html, new RegExp(`<title>${page.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</title>`));
     assert.match(html, new RegExp(`<h1[^>]*>${page.h1.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h1>`));
     assert.match(html, new RegExp(`<link rel="canonical" href="${page.canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
-    assert.match(html, /<meta name="description" content="[^\"]{80,170}">/);
+    assert.match(html, /<meta name="description" content="[^\"]{100,160}">/);
     assert.match(html, /"@type"\s*:\s*"FAQPage"/);
+    assert.match(html, new RegExp(`data-prompt-tool data-use-case="general" data-default-format="${page.format}"`));
+    assert.match(html, /"@type"\s*:\s*"SoftwareApplication"/);
+    assert.equal((html.match(/<h1\b/g) || []).length, 1);
+  }
+});
+
+test('publishes four distinct generator and scene pages with working tool metadata', () => {
+  for (const page of newPages) {
+    const html = readPage(page.directory);
+    assert.match(html, new RegExp(`<title>${page.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</title>`));
+    assert.match(html, new RegExp(`<h1[^>]*>${page.h1.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h1>`));
+    assert.equal((html.match(/<h1\b/g) || []).length, 1);
+    assert.match(html, new RegExp(`<link rel="canonical" href="https://img2prompt\\.app/${page.directory}/"`));
+    assert.match(html, /<meta name="description" content="[^\"]{100,160}">/);
+    assert.match(html, new RegExp(`data-prompt-tool data-use-case="${page.useCase}" data-default-format="${page.format}"`));
+    assert.match(html, /assets\/embedded-generator\.js/);
+    assert.match(html, /"@type"\s*:\s*"SoftwareApplication"/);
+    assert.match(html, /href="\/"/, `${page.directory} should link to the homepage`);
+    assert.match(html, new RegExp(`href="/${page.related}/"`), `${page.directory} should link to a related guide`);
   }
 });
 
@@ -117,12 +143,19 @@ test('Stable Diffusion page separates positive and negative prompts and explains
 
 test('Character consistency page separates fixed identity anchors from scene changes', () => {
   const html = readPage('character-consistency-prompt');
-  assert.match(html, /existing Nano Banana prompt generator/i);
+  assert.match(html, /tool below analyzes your image in Nano Banana format/i);
   assert.match(html, /identity anchor/i);
   assert.match(html, /what stays fixed/i);
   assert.match(html, /what changes/i);
   assert.match(html, /reference image/i);
   assert.match(html, /cannot guarantee/i);
+});
+
+test('scene pages offer distinct material beyond the common uploader', () => {
+  assert.match(readPage('product-image-to-prompt'), /Editable ad copy brief/);
+  assert.match(readPage('anime-image-to-prompt'), /character design sheet/);
+  assert.match(readPage('interior-design-prompt'), /Style comparison for the same room/);
+  assert.match(readPage('image-to-prompt-generator'), /What goes in, and what comes out/);
 });
 
 test('landing pages provide contextual links to the other model guides', () => {
@@ -134,7 +167,11 @@ test('landing pages provide contextual links to the other model guides', () => {
   }
 });
 
-test('homepage links its model cards to the four in-depth guides', () => {
+test('homepage links to the generator, scene pages, and model guides', () => {
+  assert.match(homepage, /href="\/image-to-prompt-generator\/"/);
+  assert.match(homepage, /href="\/product-image-to-prompt\/"/);
+  assert.match(homepage, /href="\/anime-image-to-prompt\/"/);
+  assert.match(homepage, /href="\/interior-design-prompt\/"/);
   assert.match(homepage, /href="\/midjourney-image-to-prompt\/"/);
   assert.match(homepage, /href="\/nano-banana-image-to-prompt\/"/);
   assert.match(homepage, /href="\/image-to-video-prompt\/"/);
@@ -162,11 +199,15 @@ test('sitemap exposes all public landing and trust pages with absolute URLs', ()
   const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
   const publicPaths = [
     '/',
+    '/image-to-prompt-generator/',
     '/midjourney-image-to-prompt/',
     '/nano-banana-image-to-prompt/',
     '/image-to-video-prompt/',
     '/stable-diffusion-image-to-prompt/',
     '/character-consistency-prompt/',
+    '/product-image-to-prompt/',
+    '/anime-image-to-prompt/',
+    '/interior-design-prompt/',
     '/privacy/',
     '/terms/',
     '/contact/',
@@ -181,11 +222,15 @@ test('sitemap exposes all public landing and trust pages with absolute URLs', ()
 test('all published JSON-LD blocks contain valid JSON', () => {
   const structuredPages = [
     'index.html',
+    'image-to-prompt-generator/index.html',
     'midjourney-image-to-prompt/index.html',
     'nano-banana-image-to-prompt/index.html',
     'image-to-video-prompt/index.html',
     'stable-diffusion-image-to-prompt/index.html',
     'character-consistency-prompt/index.html',
+    'product-image-to-prompt/index.html',
+    'anime-image-to-prompt/index.html',
+    'interior-design-prompt/index.html',
   ];
   let blockCount = 0;
 
@@ -199,5 +244,5 @@ test('all published JSON-LD blocks contain valid JSON', () => {
     }
   }
 
-  assert.equal(blockCount, 8);
+  assert.equal(blockCount, 17);
 });

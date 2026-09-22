@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4R1VYKF6P0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4R1VYKF6P0');
+  </script>
+  <title>Anime Image to Prompt - Character and Style Guide | Img2Prompt</title>
+  <meta name="description" content="Use anime image to prompt to describe character design, composition, color and linework from a reference. Build a reusable brief for your next AI art variation.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://img2prompt.app/anime-image-to-prompt/">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Anime Image to Prompt - Character and Style Guide | Img2Prompt">
+  <meta property="og:description" content="Describe a character's visual anchors, then change the scene without losing the design brief.">
+  <meta property="og:url" content="https://img2prompt.app/anime-image-to-prompt/">
+  <link rel="stylesheet" href="../assets/content-pages.css">
+  <link rel="stylesheet" href="../assets/embedded-generator.css">
+  <style>
+    .character-sheet { display: grid; grid-template-columns: 180px 1fr; gap: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .character-sheet dt, .character-sheet dd { margin: 0; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+    .character-sheet dt { background: #fbf5f1; font-weight: 750; }
+    .character-sheet dd { color: var(--muted); }
+    .character-sheet dt:nth-last-of-type(1), .character-sheet dd:last-child { border-bottom: 0; }
+    .scene-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .scene-list article { padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .scene-list h3 { margin: 0 0 8px; }
+    .scene-list p { color: var(--muted); }
+    @media (max-width: 640px) { .character-sheet { grid-template-columns: 1fr; } .character-sheet dt { padding-bottom: 4px; border-bottom: 0; } .character-sheet dd { padding-top: 4px; } .scene-list { grid-template-columns: 1fr; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Img2Prompt Anime Image to Prompt",
+    "url": "https://img2prompt.app/anime-image-to-prompt/",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web",
+    "description": "A web tool that analyzes an uploaded anime-style image and returns a structured image generation prompt.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/">Img2<span>Prompt</span></a><a class="header-cta" href="#tool">Try the tool</a></div></header>
+
+  <main class="page-shell">
+    <p class="eyebrow">Anime character and scene studies</p>
+    <h1>Anime Image to Prompt</h1>
+    <p class="lede">Upload an anime-style reference to identify its character design and visual treatment. This page looks closely at silhouette, costume, linework, palette and framing, so you can preserve a recognizable design while planning a new scene. The result is a starting brief, not the hidden prompt that originally made the image.</p>
+
+    <section class="section-block" id="tool" aria-labelledby="tool-heading">
+      <div class="section-heading"><h2 id="tool-heading">Describe your anime reference</h2><p>Use a clear image of the character or scene. Review the output for invented details, especially hair ornaments, costume patterns and background objects.</p></div>
+      <div data-prompt-tool data-use-case="anime" data-default-format="general"></div>
+    </section>
+
+    <section class="section-block" aria-labelledby="design-heading">
+      <div class="section-heading"><h2 id="design-heading">Build a character design sheet from the image</h2><p>An anime prompt works better when it distinguishes stable design features from the art direction of one illustration.</p></div>
+      <dl class="character-sheet">
+        <dt>Silhouette</dt><dd>Hair shape, body proportions, costume outline and distinctive accessories that remain readable at a glance.</dd>
+        <dt>Face and expression</dt><dd>Visible eye shape, brows, expression and any marks you can actually see. Avoid inventing hidden traits.</dd>
+        <dt>Costume</dt><dd>Garment layers, cut, patterns and material cues; note which pieces are essential to the character.</dd>
+        <dt>Rendering</dt><dd>Line weight, cel shading, painted gradients, texture and color saturation. These describe the image's style rather than the character's identity.</dd>
+        <dt>Composition</dt><dd>Shot size, camera angle, pose, foreground and background. These can change in the next illustration.</dd>
+      </dl>
+    </section>
+
+    <section class="section-block" aria-labelledby="examples-heading">
+      <div class="section-heading"><h2 id="examples-heading">Two anime prompt directions from one imagined reference</h2><p>Writing examples only: imagine a young courier with a short indigo bob, orange scarf, patched satchel and round goggles. These examples illustrate prompt structure, not a demonstrated tool result.</p></div>
+      <div class="scene-list">
+        <article><h3>Character portrait</h3><p>Keep the design fixed. Change only the shot, expression and setting.</p><pre class="prompt-output">Anime character portrait of a young courier with a short indigo bob, orange scarf, patched canvas satchel and round goggles pushed onto the forehead. Quiet, alert expression. Chest-up framing at a train-station window, early blue-hour light, clean expressive linework, restrained cel shading, warm orange against cool indigo.</pre></article>
+        <article><h3>Action scene</h3><p>Reuse the same visual anchors while changing pose and movement.</p><pre class="prompt-output">The same young courier with short indigo bob, orange scarf, patched satchel and round goggles runs across a rain-slick rooftop. Low three-quarter angle, scarf trailing behind, city lights reflected in puddles, dynamic diagonal composition. Preserve the recognizable costume and hair silhouette; crisp anime linework with focused motion detail.</pre></article>
+      </div>
+    </section>
+
+    <section class="section-block" aria-labelledby="choices-heading">
+      <div class="section-heading"><h2 id="choices-heading">Choose what stays and what changes</h2></div>
+      <ul class="tip-list">
+        <li><strong>Keep identity anchors short.</strong> Repeat the few features that make the character recognizable instead of copying every adjective.</li>
+        <li><strong>Describe art style separately.</strong> Linework, shading and palette can change without turning the character into someone else.</li>
+        <li><strong>Use a reference workflow for close matches.</strong> A text prompt alone may drift across images; model-specific reference controls help when continuity matters.</li>
+      </ul>
+    </section>
+
+    <section class="section-block" aria-labelledby="faq-heading">
+      <div class="section-heading"><h2 id="faq-heading">Anime image to prompt FAQ</h2></div>
+      <div class="faq-list">
+        <article class="faq-item"><h3>Can this recover the exact prompt behind anime art?</h3><p>No. Pixels do not reveal the original wording, model settings or reference controls. The tool writes a new prompt from visible features.</p></article>
+        <article class="faq-item"><h3>How do I keep the same character in another scene?</h3><p>Reuse the stable visual anchors, then write new pose, action and setting separately. For closer consistency, use your image model's character or image reference features.</p></article>
+        <article class="faq-item"><h3>Should I name an anime studio or artist?</h3><p>Concrete visual properties such as linework, cel shading, colors and framing make a clearer brief and can stand on their own without a creator name.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block" aria-labelledby="related-heading">
+      <div class="section-heading"><h2 id="related-heading">Explore related workflows</h2></div>
+      <div class="related-grid">
+        <a class="related-card" href="/"><strong>Image to prompt</strong><p>Start with the general image analysis tool and choose another model format.</p></a>
+        <a class="related-card" href="/character-consistency-prompt/"><strong>Character consistency prompt</strong><p>Separate a recurring character's fixed identity from scene changes.</p></a>
+        <a class="related-card" href="/midjourney-image-to-prompt/"><strong>Midjourney image to prompt</strong><p>Turn an illustration brief into concise Midjourney wording and parameters.</p></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 Img2Prompt</span><nav class="footer-links" aria-label="Footer"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a></nav></div></footer>
+  <script defer src="../assets/embedded-generator.js"></script>
+  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+</body>
+</html>

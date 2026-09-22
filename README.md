@@ -14,11 +14,15 @@ Live site: [img2prompt.app](https://img2prompt.app/)
 
 ## Prompt guides
 
+- [Image to Prompt Generator](https://img2prompt.app/image-to-prompt-generator/)
 - [Midjourney Image to Prompt Generator](https://img2prompt.app/midjourney-image-to-prompt/)
 - [Stable Diffusion Image to Prompt Generator](https://img2prompt.app/stable-diffusion-image-to-prompt/)
 - [Nano Banana Image to Prompt Generator](https://img2prompt.app/nano-banana-image-to-prompt/)
 - [Image to Video Prompt Generator](https://img2prompt.app/image-to-video-prompt/)
 - [Character Consistency Prompt from an Image](https://img2prompt.app/character-consistency-prompt/)
+- [Product Image to Prompt](https://img2prompt.app/product-image-to-prompt/)
+- [Anime Image to Prompt](https://img2prompt.app/anime-image-to-prompt/)
+- [Interior Design Prompts](https://img2prompt.app/interior-design-prompt/)
 - [Same Image, Different Model prompt comparison](https://img2prompt.app/#model-comparison)
 
 ## Project notes

@@ -10,16 +10,23 @@
     gtag('js', new Date());
     gtag('config', 'G-4R1VYKF6P0');
   </script>
-  <title>Character Consistency Prompt from an Image | Img2Prompt</title>
-  <meta name="description" content="Turn a character reference image into a consistency-ready prompt with fixed identity anchors, controlled scene changes, and practical model guidance.">
+  <title>Character Consistency Prompt Generator - AI Character Tool | Img2Prompt</title>
+  <meta name="description" content="Character consistency prompt generator helps separate fixed identity details from scene changes, with reusable examples for recurring AI characters.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://img2prompt.app/character-consistency-prompt/">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Character Consistency Prompt from an Image | Img2Prompt">
+  <meta property="og:title" content="Character Consistency Prompt Generator - AI Character Tool | Img2Prompt">
   <meta property="og:description" content="Separate what must stay fixed from what can change when building prompts for a recurring AI character.">
   <meta property="og:url" content="https://img2prompt.app/character-consistency-prompt/">
   <link rel="stylesheet" href="../assets/content-pages.css">
+  <link rel="stylesheet" href="../assets/embedded-generator.css">
+  <script src="../assets/embedded-generator.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+  <style>.workflow-table{display:block;overflow-x:auto;width:100%;border-collapse:collapse}.workflow-table th,.workflow-table td{padding:12px 14px;border-bottom:1px solid #ddd9d2;text-align:left;vertical-align:top;min-width:140px}</style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Img2Prompt Character Consistency Prompt Generator","url":"https://img2prompt.app/character-consistency-prompt/","applicationCategory":"DesignApplication","operatingSystem":"Web","description":"Analyze a character reference image and draft a reusable visual prompt for controlled scene changes.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -54,8 +61,8 @@
 
   <main class="page-shell">
     <p class="eyebrow">Recurring character workflow</p>
-    <h1>Character Consistency Prompt from an Image</h1>
-    <p class="lede">Turn a character reference into a clear identity anchor, then describe the pose, outfit, expression, and setting you want to change without rewriting the character from scratch.</p>
+    <h1>Character Consistency Prompt Generator</h1>
+    <p class="lede">This page helps you write a reusable identity block from a character reference. It shows how to change pose, clothing, and setting across scenes while keeping the character's visible anchors stable.</p>
     <div class="hero-actions">
       <a class="primary-link" href="/?format=nano-banana#generator">Create a character prompt</a>
       <a class="secondary-link" href="#examples">See consistency examples →</a>
@@ -63,7 +70,12 @@
     <ul class="proof-list" aria-label="Benefits">
       <li>Free to use</li><li>No login</li><li>Fixed identity anchors</li><li>Controlled scene changes</li>
     </ul>
-    <div class="notice"><strong>How this page works:</strong> The examples below are workflow templates. The button opens Img2Prompt's existing Nano Banana prompt generator and analyzes your image; it does not claim to guarantee an identical face in every output.</div>
+    <div class="notice"><strong>How this page works:</strong> The tool below analyzes your image in Nano Banana format. The examples are workflow templates; a text prompt alone cannot guarantee an identical face in every output.</div>
+
+    <section class="section-block" aria-label="Try the character consistency prompt tool">
+      <div class="section-heading"><h2>Draft an identity anchor</h2><p>Nano Banana is selected as the starting format. Upload a clear character reference, then copy its visible features into the fixed-identity block shown in the examples below.</p></div>
+      <div data-prompt-tool data-use-case="general" data-default-format="nano-banana"></div>
+    </section>
 
     <section class="section-block">
       <div class="section-heading">
@@ -93,6 +105,19 @@
           <figcaption>New interpretation: the subject can vary, so identity controls still matter beyond the written prompt.</figcaption>
         </figure>
       </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Character sheet: one identity, several scenes</h2><p>Keep the first column stable across every prompt. Rewrite the second column for each new shot instead of subtly changing the face description each time.</p></div>
+      <table class="workflow-table">
+        <thead><tr><th scope="col">Scene</th><th scope="col">Fixed character anchor</th><th scope="col">Controlled change</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Portrait</th><td>Black bob, brown eyes, left-cheek beauty mark, red scarf, white fox mask.</td><td>Calm expression, shoulders-up framing, soft winter window light.</td></tr>
+          <tr><th scope="row">Action</th><td>Repeat the same face, hair, mark, scarf, and mask design.</td><td>Running beside a torii gate; low angle and moving robe hem.</td></tr>
+          <tr><th scope="row">New location</th><td>Repeat the identity block before describing the environment.</td><td>Rainy train platform, charcoal travel coat, amber night light.</td></tr>
+        </tbody>
+      </table>
+      <div class="notice">A written anchor improves clarity, but exact likeness also depends on your model's reference-image or identity controls. For a focused edit of an existing frame, see the <a href="/nano-banana-image-to-prompt/">Nano Banana editing workflow</a>.</div>
     </section>
 
     <section class="section-block" id="examples">

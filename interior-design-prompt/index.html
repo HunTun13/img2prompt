@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4R1VYKF6P0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4R1VYKF6P0');
+  </script>
+  <title>Interior Design Prompts - Room Styles from References | Img2Prompt</title>
+  <meta name="description" content="Create interior design prompts from a room reference. Preserve layout, windows and camera view while comparing materials, furniture, lighting and decor styles.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://img2prompt.app/interior-design-prompt/">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Interior Design Prompts - Room Styles from References | Img2Prompt">
+  <meta property="og:description" content="Use a room photo as a visual brief, then compare style changes while preserving its layout.">
+  <meta property="og:url" content="https://img2prompt.app/interior-design-prompt/">
+  <link rel="stylesheet" href="../assets/content-pages.css">
+  <link rel="stylesheet" href="../assets/embedded-generator.css">
+  <style>
+    .room-brief { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .room-brief > div { padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .room-brief strong { display: block; margin-bottom: 6px; }
+    .room-brief p { color: var(--muted); }
+    .style-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .style-table { width: 100%; border-collapse: collapse; min-width: 620px; text-align: left; }
+    .style-table th, .style-table td { padding: 15px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .style-table thead { background: #fbf5f1; }
+    .style-table tbody tr:last-child td { border-bottom: 0; }
+    .style-table td:first-child { font-weight: 700; }
+    @media (max-width: 640px) { .room-brief { grid-template-columns: 1fr; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Img2Prompt Interior Design Prompts",
+    "url": "https://img2prompt.app/interior-design-prompt/",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web",
+    "description": "A web tool that analyzes an uploaded room image and returns a structured image generation prompt for interior concepts.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/">Img2<span>Prompt</span></a><a class="header-cta" href="#tool">Try the tool</a></div></header>
+
+  <main class="page-shell">
+    <p class="eyebrow">From room reference to visual brief</p>
+    <h1>Interior Design Prompts</h1>
+    <p class="lede">Upload a room image to draft a visual prompt grounded in its layout, light and materials. This page helps you separate the physical features you want to preserve from furniture and finishes you want to explore. The prompts support concept images; they are not measured plans or construction advice.</p>
+
+    <section class="section-block" id="tool" aria-labelledby="tool-heading">
+      <div class="section-heading"><h2 id="tool-heading">Start with your room reference</h2><p>A wide, level photo makes openings, furniture placement and light direction easier to describe. Review the generated prompt before changing or sharing it.</p></div>
+      <div data-prompt-tool data-use-case="interior" data-default-format="general"></div>
+    </section>
+
+    <section class="section-block" aria-labelledby="room-heading">
+      <div class="section-heading"><h2 id="room-heading">Room case: keep the space, change the furnishings</h2><p>Illustrative brief for a compact living room with a large left-hand window, pale wood floor and a straight-on camera view. This is an authored example of how to organize a prompt, not a before-and-after result from the tool.</p></div>
+      <div class="room-brief">
+        <div><strong>Keep fixed</strong><p>Room proportions, left-hand window, pale wood floor, ceiling height, doorway position, straight-on viewpoint and daylight direction.</p></div>
+        <div><strong>Explore</strong><p>Seating profile, side tables, rug texture, wall color, accent lighting and decor density. Change one family of choices at a time to compare results.</p></div>
+      </div>
+      <article class="example-card" style="margin-top: 18px;">
+        <div class="example-context"><h3>Example visual prompt</h3><p>A room styling direction written from the hypothetical brief above.</p></div>
+        <pre class="prompt-output">Restyle this compact living room with a low oatmeal linen sofa, light oak coffee table, woven wool rug and one dark ceramic lamp. Preserve the room proportions, left-hand window, doorway position, pale wood floor, ceiling height, straight-on camera view and existing daylight direction. Calm warm-neutral palette, natural material texture, uncluttered surfaces, realistic interior photography.</pre>
+      </article>
+    </section>
+
+    <section class="section-block" aria-labelledby="style-heading">
+      <div class="section-heading"><h2 id="style-heading">Style comparison for the same room</h2><p>These are prompt ingredients, not promises of an exact renovation. Keep the geometry block from your own reference and swap only the styling instructions.</p></div>
+      <div class="style-table-wrap">
+        <table class="style-table">
+          <thead><tr><th scope="col">Direction</th><th scope="col">Materials and furniture</th><th scope="col">Lighting and finish</th></tr></thead>
+          <tbody>
+            <tr><td>Warm minimal</td><td>Low linen sofa, pale oak, textured wool, restrained ceramics</td><td>Soft window daylight, matte surfaces, gentle shadows</td></tr>
+            <tr><td>Mid-century</td><td>Walnut credenza, tapered-leg seating, leather accents, geometric rug</td><td>Warm lamp pools, richer wood contrast, muted mustard or rust</td></tr>
+            <tr><td>Contemporary color</td><td>Sculptural seating, lacquered side table, broad color-block artwork</td><td>Directional accent light, crisp edges, one saturated focal color</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section-block" aria-labelledby="review-heading">
+      <div class="section-heading"><h2 id="review-heading">Check what the concept image changed</h2></div>
+      <ul class="tip-list">
+        <li><strong>Geometry:</strong> confirm that windows, doors, walls and ceiling stayed where the reference showed them.</li>
+        <li><strong>Scale:</strong> treat furniture size in generated images as approximate until you have real measurements.</li>
+        <li><strong>Light:</strong> note whether the new fixtures and daylight direction make sense for the room.</li>
+      </ul>
+    </section>
+
+    <section class="section-block" aria-labelledby="faq-heading">
+      <div class="section-heading"><h2 id="faq-heading">Interior design prompts FAQ</h2></div>
+      <div class="faq-list">
+        <article class="faq-item"><h3>Can the prompt preserve my exact room layout?</h3><p>It can describe visible room geometry and tell an image model what to keep, but generated concepts can still move walls, doors or windows. Inspect each result against the reference.</p></article>
+        <article class="faq-item"><h3>Should I upload an empty room or a furnished one?</h3><p>Either works. An empty room makes architecture easier to see; a furnished room gives useful clues about scale, lighting and the current style.</p></article>
+        <article class="faq-item"><h3>Can I use a generated image as a renovation plan?</h3><p>No. It is a visual concept. Confirm dimensions, structure, electrical work, materials and safety requirements with qualified professionals before building.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block" aria-labelledby="related-heading">
+      <div class="section-heading"><h2 id="related-heading">Related prompt workflows</h2></div>
+      <div class="related-grid">
+        <a class="related-card" href="/"><strong>Image to prompt</strong><p>Describe any reference and choose from the available prompt formats.</p></a>
+        <a class="related-card" href="/nano-banana-image-to-prompt/"><strong>Nano Banana image to prompt</strong><p>Write a targeted room edit while keeping the architecture and camera fixed.</p></a>
+        <a class="related-card" href="/image-to-video-prompt/"><strong>Image to video prompt</strong><p>Plan a restrained camera move through an interior concept still.</p></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 Img2Prompt</span><nav class="footer-links" aria-label="Footer"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a></nav></div></footer>
+  <script defer src="../assets/embedded-generator.js"></script>
+  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+</body>
+</html>

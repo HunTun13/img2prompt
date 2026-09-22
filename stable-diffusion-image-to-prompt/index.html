@@ -11,16 +11,23 @@
     gtag('js', new Date());
     gtag('config', 'G-4R1VYKF6P0');
   </script>
-  <title>Stable Diffusion Image to Prompt Generator | Img2Prompt</title>
-  <meta name="description" content="Turn a reference image into a Stable Diffusion positive prompt, focused negative prompt, composition notes, and practical A1111 or ComfyUI guidance.">
+  <title>Stable Diffusion Image to Prompt - SD Prompt Generator | Img2Prompt</title>
+  <meta name="description" content="Stable Diffusion image to prompt turns a reference into clear positive and negative text, with practical guidance for A1111 and ComfyUI workflows.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://img2prompt.app/stable-diffusion-image-to-prompt/">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Stable Diffusion Image to Prompt Generator | Img2Prompt">
+  <meta property="og:title" content="Stable Diffusion Image to Prompt - SD Prompt Generator | Img2Prompt">
   <meta property="og:description" content="Build practical positive and negative prompts from a reference image for Stable Diffusion workflows.">
   <meta property="og:url" content="https://img2prompt.app/stable-diffusion-image-to-prompt/">
   <link rel="stylesheet" href="../assets/content-pages.css">
+  <link rel="stylesheet" href="../assets/embedded-generator.css">
+  <script src="../assets/embedded-generator.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+  <style>.workflow-table{display:block;overflow-x:auto;width:100%;border-collapse:collapse}.workflow-table th,.workflow-table td{padding:12px 14px;border-bottom:1px solid #ddd9d2;text-align:left;vertical-align:top;min-width:140px}</style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Img2Prompt Stable Diffusion Image to Prompt","url":"https://img2prompt.app/stable-diffusion-image-to-prompt/","applicationCategory":"DesignApplication","operatingSystem":"Web","description":"Generate positive and negative Stable Diffusion prompt text from a reference image.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -55,8 +62,8 @@
 
   <main class="page-shell">
     <p class="eyebrow">Positive and negative prompt workflow</p>
-    <h1>Stable Diffusion Image to Prompt Generator</h1>
-    <p class="lede">Upload a reference image and turn its visible subject, composition, medium, lighting, and color into a practical Stable Diffusion positive prompt with focused exclusions.</p>
+    <h1>Stable Diffusion Image to Prompt</h1>
+    <p class="lede">This page turns a reference image into separate positive and negative prompt ideas for Stable Diffusion. It focuses on visible evidence and local workflow controls instead of guessing an unavailable checkpoint, seed, or LoRA.</p>
     <div class="hero-actions">
       <a class="primary-link" href="/?format=stable-diffusion#generator">Create a Stable Diffusion prompt</a>
       <a class="secondary-link" href="#examples">See prompt examples →</a>
@@ -64,6 +71,11 @@
     <ul class="proof-list" aria-label="Benefits">
       <li>Free to use</li><li>No login</li><li>Positive + negative output</li><li>A1111 and ComfyUI ready</li>
     </ul>
+
+    <section class="section-block" aria-label="Try the Stable Diffusion image to prompt tool">
+      <div class="section-heading"><h2>Extract a positive and negative pair</h2><p>Stable Diffusion is selected by default. Generate a starting prompt from your image, then adapt the wording to the checkpoint and interface you actually use.</p></div>
+      <div data-prompt-tool data-use-case="general" data-default-format="stable-diffusion"></div>
+    </section>
 
     <section class="section-block">
       <div class="section-heading">
@@ -112,6 +124,19 @@ Negative prompt: hands, people, extra bottles, warped label, illegible lettering
         <li><strong>Match the reference shape.</strong> Choose dimensions with a similar portrait, square, or landscape ratio. Composition often changes when the canvas shape changes.</li>
         <li><strong>Add model-specific syntax last.</strong> Weighting conventions, trigger words, and LoRA activation phrases depend on the checkpoint and resources you actually use.</li>
       </ul>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading"><h2>Adapt the prompt to your model and interface</h2><p>The image gives you visual facts; your selected checkpoint determines how those words are interpreted.</p></div>
+      <table class="workflow-table">
+        <thead><tr><th scope="col">Workflow</th><th scope="col">What to keep</th><th scope="col">What to test</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">SD 1.5 checkpoints</th><td>Subject, framing, medium, light, and a short negative list.</td><td>Test whether your checkpoint needs specific style terms; do not copy unknown trigger words from a reference.</td></tr>
+          <tr><th scope="row">SDXL checkpoints</th><td>A readable visual description and image-specific exclusions.</td><td>Compare a natural sentence with shorter tags; choose the wording your checkpoint actually follows.</td></tr>
+          <tr><th scope="row">Custom checkpoints and LoRAs</th><td>Visible features that should survive a model change.</td><td>Add documented trigger words and weights only for the model files you installed.</td></tr>
+        </tbody>
+      </table>
+      <div class="notice">In A1111, place the generated positive and negative text in the matching prompt boxes. In ComfyUI, connect each text-encoding node to its corresponding positive or negative conditioning input. Choose image size, sampler, steps, CFG, and reference controls in your own workflow.</div>
     </section>
 
     <section class="section-block">
