@@ -11,18 +11,18 @@
   gtag('js', new Date());
   gtag('config', 'G-4R1VYKF6P0');
 </script>
-<title>Image to Prompt Generator - Free Tool | Img2Prompt</title>
-<meta name="description" content="Upload any image and get a model-ready AI prompt for Midjourney, Flux, Stable Diffusion, DALL·E and more. Free image to prompt generator by Img2Prompt.">
+<title>Image to Prompt - Free AI Image to Prompt Generator | Img2Prompt</title>
+<meta name="description" content="Turn any image into a model-ready AI prompt for Midjourney, Flux, Stable Diffusion, DALL·E and more. Free image to prompt tool, no sign-up.">
 <meta name="keywords" content="image to prompt, image to prompt generator, prompt from image, img to prompt, get prompt from image, generate prompt from image, convert image to prompt, extract prompt from image, AI image prompt generator">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://img2prompt.app/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<meta property="og:title" content="Image to Prompt Generator - Free Tool | Img2Prompt">
+<meta property="og:title" content="Image to Prompt - Free AI Image to Prompt Generator | Img2Prompt">
 <meta property="og:description" content="Turn any image into a model-ready AI prompt for Midjourney, Flux, Stable Diffusion, Nano Banana, DALL·E and more. Free by Img2Prompt.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://img2prompt.app/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Image to Prompt Generator - Img2Prompt">
+<meta name="twitter:title" content="Image to Prompt | Img2Prompt">
 <meta name="twitter:description" content="Upload any image and get a ready-to-use AI prompt for Midjourney, Flux, Stable Diffusion, Nano Banana, DALL·E. Free by Img2Prompt.">
 
 <!-- Cloudflare Turnstile -->
@@ -254,6 +254,12 @@ header {
   font-size: clamp(16px, 2vw, 18px); color: var(--text-3);
   max-width: 650px; margin-bottom: 28px; line-height: 1.65;
 }
+.hero-concept {
+  max-width: 760px; margin: 0 0 30px; padding: 17px 20px;
+  border-left: 3px solid var(--primary); background: rgba(255,254,251,.78);
+  color: var(--text-2); font-size: 14px; line-height: 1.65;
+}
+.hero-concept a { color: var(--primary-hover); font-weight: 700; }
 
 /* ===== TRUST BAR ===== */
 .trust-bar {
@@ -685,6 +691,7 @@ footer {
     </a>
     <div class="header-cta">
       <nav class="header-nav" aria-label="Main navigation">
+        <a href="/image-to-prompt-generator/">Generator</a>
         <a href="#examples">Examples</a>
         <a href="#supported-formats">Models</a>
         <a href="#faq">FAQ</a>
@@ -714,8 +721,10 @@ footer {
       <span class="trust-badge">Structured output</span>
     </div>
 
+    <p class="hero-concept">Image to prompt turns a reference image into instructions for creating a new image, rather than a plain caption of what is visible. Here you can capture the subject, composition, lighting, and style for a chosen model; for a closer look at each output field, see the <a href="/image-to-prompt-generator/">generator guide</a>.</p>
+
     <!-- Tool Card -->
-    <div class="tool-card">
+    <div class="tool-card" id="generator">
       <!-- Drop Zone -->
       <div id="drop-zone" role="button" aria-label="Upload image area" tabindex="0">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -1015,11 +1024,13 @@ footer {
         <div class="uc-index" aria-hidden="true">03</div>
         <h3>Product Image Prompts</h3>
         <p>Convert product photos into prompts for e-commerce scenes, lifestyle shots, and ad creative generation.</p>
+        <a class="format-guide-link" href="/product-image-to-prompt/">Explore product prompts →</a>
       </div>
       <div class="usecase-card">
         <div class="uc-index" aria-hidden="true">04</div>
         <h3>Anime &amp; Character Prompts</h3>
         <p>Extract visual details from anime, game art, portraits, and character references for accurate recreation.</p>
+        <a class="format-guide-link" href="/anime-image-to-prompt/">Explore anime prompts →</a>
       </div>
       <div class="usecase-card">
         <div class="uc-index" aria-hidden="true">05</div>
@@ -1030,6 +1041,7 @@ footer {
         <div class="uc-index" aria-hidden="true">06</div>
         <h3>Interior Design Prompts</h3>
         <p>Convert room photos into detailed prompts for generating new interior design variations and styles.</p>
+        <a class="format-guide-link" href="/interior-design-prompt/">Explore interior prompts →</a>
       </div>
     </div>
   </div>
