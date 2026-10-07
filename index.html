@@ -500,11 +500,11 @@ header {
 .copy-sample { margin-top: 16px; padding: 0; border: 0; background: none; color: var(--primary); font-size: 12px; font-weight: 700; }
 .copy-sample:hover { text-decoration: underline; }
 .model-comparison { margin-top: 64px; padding-top: 44px; border-top: 1px solid var(--border-2); }
-.comparison-heading { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); gap: 36px; align-items: end; margin-bottom: 24px; }
+.comparison-heading { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 24px; align-items: end; margin-bottom: 24px; }
 .comparison-heading .section-sub { max-width: 680px; }
-.comparison-workbench { display: grid; grid-template-columns: minmax(220px, .72fr) minmax(0, 1.6fr); gap: 20px; align-items: start; }
-.comparison-reference { margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
-.comparison-reference img { width: 100%; aspect-ratio: 4 / 3; display: block; object-fit: cover; }
+.comparison-workbench { display: grid; grid-template-columns: minmax(280px, .95fr) minmax(0, 1.05fr); gap: 24px; align-items: stretch; }
+.comparison-reference { display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.comparison-reference img { width: 100%; height: 100%; min-height: 0; display: block; object-fit: cover; object-position: center; }
 .comparison-reference figcaption { padding: 14px 16px; color: var(--text-4); font-size: 12px; line-height: 1.55; }
 .model-prompt-list { display: grid; gap: 10px; }
 .model-prompt-card { padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
@@ -646,7 +646,8 @@ footer {
   .case-pair { min-height: 300px; }
   .comparison-heading, .comparison-workbench { grid-template-columns: 1fr; }
   .comparison-heading { gap: 10px; }
-  .comparison-reference { max-width: 520px; }
+  .comparison-reference { display: block; height: auto; max-width: 520px; }
+  .comparison-reference img { height: auto; aspect-ratio: 4 / 3; }
   .options-grid { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; border-top: 0; }
   .step, .step + .step { border-right: 0; border-top: 1px solid var(--border); padding: 22px 0; }
